@@ -1,0 +1,37 @@
+storage:
+  provider: 'sqlite'
+  sqlite:
+    path: './alerthq.db'
+  # provider: 'postgresql'
+  # postgresql:
+  #   connectionString: '${ALERTHQ_PG_CONNECTION_STRING}'
+
+providers:
+  aws-cloudwatch:
+    enabled: true
+    regions: ['us-east-1', 'eu-west-1']
+
+  elastic:
+    enabled: true
+    url: 'https://your-cluster.es.cloud:9243'
+    kibanaUrl: 'https://your-cluster.kb.cloud:9243'
+    auth:
+      type: 'basic'
+      username: '${ALERTHQ_ELASTIC_USERNAME}'
+      password: '${ALERTHQ_ELASTIC_PASSWORD}'
+
+  mongodb-atlas:
+    enabled: true
+    publicKey: '${ALERTHQ_ATLAS_PUBLIC_KEY}'
+    privateKey: '${ALERTHQ_ATLAS_PRIVATE_KEY}'
+    projectIds: ['project-id-1']
+
+  azure-monitor:
+    enabled: true
+    subscriptionIds: ['sub-id-1']
+
+  # Third-party:
+  # datadog:
+  #   package: 'alerthq-provider-datadog'
+  #   enabled: true
+  #   apiKey: '${DD_API_KEY}'

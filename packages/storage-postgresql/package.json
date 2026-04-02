@@ -1,0 +1,30 @@
+{
+  "name": "@alerthq/storage-postgresql",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "PostgreSQL storage backend for alerthq",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "pg": "^8.13.0"
+  },
+  "peerDependencies": {
+    "@alerthq/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.0"
+  },
+  "license": "MIT"
+}

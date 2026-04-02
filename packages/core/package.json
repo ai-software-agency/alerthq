@@ -1,0 +1,30 @@
+{
+  "name": "@alerthq/core",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Core library for alerthq — domain types, plugin interfaces, config/plugin loading, and core functions",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "test": "vitest run",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0",
+    "uuid": "^11.0.0",
+    "yaml": "^2.6.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^10.0.0"
+  },
+  "license": "MIT"
+}

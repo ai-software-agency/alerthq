@@ -1,0 +1,28 @@
+{
+  "name": "@alerthq/provider-azure-monitor",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Azure Monitor alert provider for alerthq",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.5.0",
+    "@azure/arm-monitor": "^7.0.0"
+  },
+  "peerDependencies": {
+    "@alerthq/core": "workspace:*"
+  },
+  "license": "MIT"
+}

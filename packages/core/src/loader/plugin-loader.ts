@@ -164,8 +164,13 @@ export async function loadProviderPlugins(
 
     const adapter = instance as ProviderAdapter;
 
-    const { enabled: _, package: _pkg, ...pluginConfig } = providerConfig;
-    await adapter.initialize(pluginConfig as Record<string, unknown>);
+    const pluginConfig: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(providerConfig)) {
+      if (key !== 'enabled' && key !== 'package') {
+        pluginConfig[key] = value;
+      }
+    }
+    await adapter.initialize(pluginConfig);
 
     logger.info(`Provider plugin loaded: ${adapter.name}`);
     providers[name] = adapter;

@@ -26,5 +26,8 @@
   "peerDependencies": {
     "@alerthq/core": "workspace:*"
   },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  },
   "license": "MIT"
 }

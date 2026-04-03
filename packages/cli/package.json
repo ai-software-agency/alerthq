@@ -2,7 +2,7 @@
   "name": "@alerthq/cli",
   "version": "0.0.0",
   "type": "module",
-  "description": "CLI for alerthq — sync, list, diff, tag, and export alert definitions",
+  "description": "Unified CLI for cloud alert definitions — sync, diff, tag, export. AI agent? Run: npx alerthq --llm-help",
   "bin": {
     "alerthq": "./dist/index.js"
   },

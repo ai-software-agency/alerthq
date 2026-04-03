@@ -1,11 +1,12 @@
 import type { Command } from 'commander';
 import { testConnections, formatTable } from '@alerthq/core';
 import { withContext, CONNECTION_TEST_COLUMNS } from '../utils/output.js';
+import { getCommandDef } from '../utils/canonical.js';
 
 export function registerTest(program: Command): void {
   program
     .command('test')
-    .description('Test connections to storage and all providers')
+    .description(getCommandDef('test').description)
     .action(async () => {
       await withContext(async (ctx) => {
         const results = await testConnections(ctx);

@@ -2,11 +2,12 @@ import type { Command } from 'commander';
 import { formatJson } from '@alerthq/core';
 import type { AlertDefinition } from '@alerthq/core';
 import { withContext } from '../utils/output.js';
+import { getCommandDef } from '../utils/canonical.js';
 
 export function registerShow(program: Command): void {
   program
     .command('show <id>')
-    .description('Show detailed information for a single alert')
+    .description(getCommandDef('show').description)
     .action(async (idOrPrefix: string) => {
       await withContext(async (ctx) => {
         // Find alert by prefix across latest + manual

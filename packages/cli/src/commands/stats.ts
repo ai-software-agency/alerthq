@@ -1,11 +1,12 @@
 import type { Command } from 'commander';
 import { getAlerts, formatTable } from '@alerthq/core';
 import { withContext } from '../utils/output.js';
+import { getCommandDef } from '../utils/canonical.js';
 
 export function registerStats(program: Command): void {
   program
     .command('stats')
-    .description('Show summary statistics for alerts')
+    .description(getCommandDef('stats').description)
     .action(async () => {
       await withContext(async (ctx) => {
         const alerts = await getAlerts(ctx);

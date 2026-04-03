@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import { META, CLI_COMMANDS, generateLlmHelp } from '@alerthq/core';
 import { registerInit } from './commands/init.js';
 import { registerTest } from './commands/test.js';
 import { registerSync } from './commands/sync.js';
@@ -14,24 +15,43 @@ import { registerTag } from './commands/tag.js';
 import { registerExport } from './commands/export.js';
 import { registerStats } from './commands/stats.js';
 
+// Handle --llm-help before commander parses
+if (process.argv.includes('--llm-help')) {
+  console.log(JSON.stringify(generateLlmHelp(), null, 2));
+  process.exit(0);
+}
+
 const program = new Command();
 
+const cliMeta = CLI_COMMANDS;
+
 program
-  .name('alerthq')
-  .description('CLI for alerthq — sync, list, diff, tag, and export alert definitions')
+  .name(META.name)
+  .description(META.npmDescription)
   .version('0.0.0');
 
-registerInit(program);
-registerTest(program);
-registerSync(program);
-registerList(program);
-registerShow(program);
-registerDiff(program);
-registerVersions(program);
-registerAdd(program);
-registerRemove(program);
-registerTag(program);
-registerExport(program);
-registerStats(program);
+// Map command names to registration functions
+const registrations: Record<string, (program: Command) => void> = {
+  init: registerInit,
+  test: registerTest,
+  sync: registerSync,
+  list: registerList,
+  show: registerShow,
+  diff: registerDiff,
+  versions: registerVersions,
+  add: registerAdd,
+  remove: registerRemove,
+  tag: registerTag,
+  export: registerExport,
+  stats: registerStats,
+};
+
+// Register all commands — descriptions come from canonical data
+for (const cmd of cliMeta) {
+  const register = registrations[cmd.name];
+  if (register) {
+    register(program);
+  }
+}
 
 program.parse();

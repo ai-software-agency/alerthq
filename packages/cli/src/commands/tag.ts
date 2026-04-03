@@ -1,11 +1,12 @@
 import type { Command } from 'commander';
 import { setTag } from '@alerthq/core';
 import { withContext } from '../utils/output.js';
+import { getCommandDef } from '../utils/canonical.js';
 
 export function registerTag(program: Command): void {
   program
     .command('tag <id> <keyvalue>')
-    .description('Set an overlay tag on an alert (key=value)')
+    .description(getCommandDef('tag').description)
     .action(async (idOrPrefix: string, keyvalue: string) => {
       const eqIndex = keyvalue.indexOf('=');
       if (eqIndex <= 0) {

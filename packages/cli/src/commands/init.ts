@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import { createInterface } from 'node:readline/promises';
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { getCommandDef } from '../utils/canonical.js';
 
 const KNOWN_PROVIDERS: Record<string, { package: string; envVars: string[] }> = {
   'aws-cloudwatch': {
@@ -36,7 +37,7 @@ const STORAGE_OPTIONS: Record<string, { package: string; envVars: string[] }> = 
 export function registerInit(program: Command): void {
   program
     .command('init')
-    .description('Interactive setup — generate alerthq.config.yml')
+    .description(getCommandDef('init').description)
     .action(async () => {
       const rl = createInterface({ input: process.stdin, output: process.stdout });
 

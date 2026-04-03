@@ -3,6 +3,7 @@ dist
 .turbo
 *.tsbuildinfo
 .env
+alerthq.config.yml
 .DS_Store
 .local
 *.db

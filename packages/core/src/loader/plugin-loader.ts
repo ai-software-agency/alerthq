@@ -1,3 +1,5 @@
+import { createRequire } from 'node:module';
+import { resolve as pathResolve } from 'node:path';
 import type { ProviderAdapter } from '../interfaces/provider.js';
 import type { StorageProvider } from '../interfaces/storage.js';
 import type { AlerthqConfig, ProviderConfig } from '../types/config.js';
@@ -45,14 +47,41 @@ function resolveProviderPackage(providerName: string, config: ProviderConfig): s
  * @throws With an actionable install message if the import fails.
  */
 async function importPlugin(packageName: string): Promise<unknown> {
-  try {
-    const mod = await import(packageName);
-    return mod.default ?? mod;
-  } catch {
-    throw new Error(
-      `Plugin '${packageName}' not found.\nInstall it with: pnpm add ${packageName}`,
-    );
+  // Try multiple resolution strategies to support pnpm strict mode,
+  // monorepo development, and standard npm installs.
+  const strategies = [
+    // 1. Resolve from the entry script (CLI binary or consumer app)
+    () => {
+      const entry = process.argv[1];
+      if (entry) {
+        const absEntry = pathResolve(entry);
+        const entryRequire = createRequire(absEntry);
+        return entryRequire.resolve(packageName);
+      }
+      throw new Error('no entry');
+    },
+    // 2. Resolve from CWD (standard npm/yarn flat node_modules)
+    () => {
+      const require = createRequire(process.cwd() + '/package.json');
+      return require.resolve(packageName);
+    },
+    // 3. Bare import (works when core can see the package)
+    () => packageName,
+  ];
+
+  for (const resolve of strategies) {
+    try {
+      const specifier = resolve();
+      const mod = await import(specifier);
+      return mod.default ?? mod;
+    } catch {
+      continue;
+    }
   }
+
+  throw new Error(
+    `Plugin '${packageName}' not found.\nInstall it with: pnpm add ${packageName}`,
+  );
 }
 
 /**

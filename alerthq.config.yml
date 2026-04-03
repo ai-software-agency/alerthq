@@ -1,0 +1,6 @@
+storage:
+  provider: 'sqlite'
+  sqlite:
+    path: './alerthq.db'
+
+providers: {}

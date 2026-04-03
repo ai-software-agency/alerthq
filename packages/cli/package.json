@@ -24,9 +24,30 @@
     "commander": "^13.0.0"
   },
   "peerDependencies": {
-    "@alerthq/core": "workspace:*"
+    "@alerthq/core": "workspace:*",
+    "@alerthq/storage-sqlite": "workspace:*",
+    "@alerthq/storage-postgresql": "workspace:*",
+    "@alerthq/provider-aws-cloudwatch": "workspace:*",
+    "@alerthq/provider-elastic": "workspace:*",
+    "@alerthq/provider-mongodb-atlas": "workspace:*",
+    "@alerthq/provider-azure-monitor": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@alerthq/storage-sqlite": { "optional": true },
+    "@alerthq/storage-postgresql": { "optional": true },
+    "@alerthq/provider-aws-cloudwatch": { "optional": true },
+    "@alerthq/provider-elastic": { "optional": true },
+    "@alerthq/provider-mongodb-atlas": { "optional": true },
+    "@alerthq/provider-azure-monitor": { "optional": true }
   },
   "devDependencies": {
+    "@alerthq/core": "workspace:*",
+    "@alerthq/storage-sqlite": "workspace:*",
+    "@alerthq/storage-postgresql": "workspace:*",
+    "@alerthq/provider-aws-cloudwatch": "workspace:*",
+    "@alerthq/provider-elastic": "workspace:*",
+    "@alerthq/provider-mongodb-atlas": "workspace:*",
+    "@alerthq/provider-azure-monitor": "workspace:*",
     "@types/node": "^22.0.0"
   },
   "license": "MIT"

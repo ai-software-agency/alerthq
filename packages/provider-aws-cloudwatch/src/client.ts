@@ -104,20 +104,22 @@ export class CloudWatchApiClient {
   }
 
   /**
-   * Quick connectivity test: DescribeAlarms with MaxRecords 1 on the first region.
+   * Connectivity test: DescribeAlarms with MaxRecords 1 on every configured region.
+   * Returns `false` if any region is unreachable.
    */
   async testConnection(): Promise<boolean> {
-    const firstClient = this.clients.values().next().value;
-    if (!firstClient) return false;
+    if (this.clients.size === 0) return false;
 
-    try {
-      await firstClient.send(
-        new DescribeAlarmsCommand({ MaxRecords: 1 }),
-      );
-      return true;
-    } catch {
-      return false;
+    for (const [, client] of this.clients) {
+      try {
+        await client.send(
+          new DescribeAlarmsCommand({ MaxRecords: 1 }),
+        );
+      } catch {
+        return false;
+      }
     }
+    return true;
   }
 
   /**

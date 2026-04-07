@@ -1,37 +1,45 @@
+# alerthq configuration
+# Copy this file to alerthq.config.yml and customize for your environment.
+#
+# See: https://github.com/ai-software-agency/alerthq
+
 storage:
-  provider: 'sqlite'
+  provider: sqlite
   sqlite:
-    path: './alerthq.db'
-  # provider: 'postgresql'
+    path: ./alerthq.db
+
+  # Or use PostgreSQL:
+  # provider: postgresql
   # postgresql:
-  #   connectionString: '${ALERTHQ_PG_CONNECTION_STRING}'
+  #   url: ${DATABASE_URL}
 
 providers:
+  # AWS CloudWatch
+  # Requires: AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY in .env
+  # Install:  pnpm add @alerthq/provider-aws-cloudwatch
   aws-cloudwatch:
     enabled: true
-    regions: ['us-east-1', 'eu-west-1']
+    regions:
+      - us-east-1
 
-  elastic:
-    enabled: true
-    url: 'https://your-cluster.es.cloud:9243'
-    kibanaUrl: 'https://your-cluster.kb.cloud:9243'
-    auth:
-      type: 'basic'
-      username: '${ALERTHQ_ELASTIC_USERNAME}'
-      password: '${ALERTHQ_ELASTIC_PASSWORD}'
-
-  mongodb-atlas:
-    enabled: true
-    publicKey: '${ALERTHQ_ATLAS_PUBLIC_KEY}'
-    privateKey: '${ALERTHQ_ATLAS_PRIVATE_KEY}'
-    projectIds: ['project-id-1']
-
-  azure-monitor:
-    enabled: true
-    subscriptionIds: ['sub-id-1']
-
-  # Third-party:
-  # datadog:
-  #   package: 'alerthq-provider-datadog'
+  # Elastic Watcher + Kibana Rules
+  # Install: pnpm add @alerthq/provider-elastic
+  # elastic:
   #   enabled: true
-  #   apiKey: '${DD_API_KEY}'
+  #   url: https://localhost:9200
+  #   username: elastic
+  #   password: ${ELASTIC_PASSWORD}
+
+  # MongoDB Atlas
+  # Install: pnpm add @alerthq/provider-mongodb-atlas
+  # mongodb-atlas:
+  #   enabled: true
+  #   publicKey: ${ATLAS_PUBLIC_KEY}
+  #   privateKey: ${ATLAS_PRIVATE_KEY}
+  #   projectId: ${ATLAS_PROJECT_ID}
+
+  # Azure Monitor
+  # Install: pnpm add @alerthq/provider-azure-monitor
+  # azure-monitor:
+  #   enabled: true
+  #   subscriptionId: ${AZURE_SUBSCRIPTION_ID}

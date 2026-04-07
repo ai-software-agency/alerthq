@@ -36,3 +36,7 @@ export { loadStoragePlugin, loadProviderPlugins } from './loader/plugin-loader.j
 
 // Validation schema
 export { alerthqConfigSchema } from './validation/config-schema.js';
+
+// Canonical data (single source of truth for docs, help, descriptions)
+export { META, CLI_COMMANDS, generateHelpText, generateLlmHelp } from './canonical/index.js';
+export type { CliCommand, CliOption } from './canonical/index.js';

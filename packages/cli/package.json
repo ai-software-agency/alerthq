@@ -2,7 +2,7 @@
   "name": "@alerthq/cli",
   "version": "0.0.0",
   "type": "module",
-  "description": "CLI for alerthq — sync, list, diff, tag, and export alert definitions",
+  "description": "Unified CLI for cloud alert definitions — sync, diff, tag, export. AI agent? Run: npx alerthq --llm-help",
   "bin": {
     "alerthq": "./dist/index.js"
   },
@@ -11,7 +11,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "files": ["dist"],
@@ -24,7 +25,31 @@
     "commander": "^13.0.0"
   },
   "peerDependencies": {
-    "@alerthq/core": "workspace:*"
+    "@alerthq/core": "workspace:*",
+    "@alerthq/storage-sqlite": "workspace:*",
+    "@alerthq/storage-postgresql": "workspace:*",
+    "@alerthq/provider-aws-cloudwatch": "workspace:*",
+    "@alerthq/provider-elastic": "workspace:*",
+    "@alerthq/provider-mongodb-atlas": "workspace:*",
+    "@alerthq/provider-azure-monitor": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@alerthq/storage-sqlite": { "optional": true },
+    "@alerthq/storage-postgresql": { "optional": true },
+    "@alerthq/provider-aws-cloudwatch": { "optional": true },
+    "@alerthq/provider-elastic": { "optional": true },
+    "@alerthq/provider-mongodb-atlas": { "optional": true },
+    "@alerthq/provider-azure-monitor": { "optional": true }
+  },
+  "devDependencies": {
+    "@alerthq/core": "workspace:*",
+    "@alerthq/storage-sqlite": "workspace:*",
+    "@alerthq/storage-postgresql": "workspace:*",
+    "@alerthq/provider-aws-cloudwatch": "workspace:*",
+    "@alerthq/provider-elastic": "workspace:*",
+    "@alerthq/provider-mongodb-atlas": "workspace:*",
+    "@alerthq/provider-azure-monitor": "workspace:*",
+    "@types/node": "^22.0.0"
   },
   "license": "MIT"
 }

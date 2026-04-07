@@ -137,6 +137,13 @@ export async function removeManualAlert(ctx: Context, idOrPrefix: string): Promi
   }
 
   const alert = matches[0]!;
+  if (alert.source !== 'manual') {
+    throw new Error(
+      `Alert '${alert.id}' is a provider-synced alert (source: ${alert.source}). ` +
+        `Only manual alerts can be removed.`,
+    );
+  }
+
   const removed = await storage.removeAlertDefinition(0, alert.id);
   if (removed) {
     logger.info(`Removed manual alert: ${alert.name} (${alert.id})`);

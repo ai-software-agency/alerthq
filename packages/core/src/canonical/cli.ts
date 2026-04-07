@@ -126,10 +126,14 @@ export const CLI_COMMANDS: readonly CliCommand[] = [
   {
     name: 'tag',
     usage: 'tag <id> <key=value>',
-    description: 'Set an overlay tag on an alert (key=value)',
+    description: 'Set or remove an overlay tag on an alert',
+    options: [
+      { flags: '--remove', description: 'Remove the tag key instead of setting it' },
+    ],
     examples: [
       'alerthq tag abc123 env=production',
       'alerthq tag abc team=backend',
+      'alerthq tag abc123 env --remove',
     ],
   },
   {

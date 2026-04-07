@@ -251,6 +251,10 @@ class PostgresStorageProvider implements StorageProvider {
     removed: AlertDefinition[];
     modified: Array<{ before: AlertDefinition; after: AlertDefinition }>;
   }> {
+    if (fromVersion === 0 || toVersion === 0) {
+      throw new Error('getChanges does not operate on version 0 (manual alerts)');
+    }
+
     const { rows: addedRows } = await this.pool.query<RawAlert>(
       `SELECT * FROM alert_definitions
        WHERE version = $1 AND id NOT IN (SELECT id FROM alert_definitions WHERE version = $2)`,

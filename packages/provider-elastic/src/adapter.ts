@@ -40,10 +40,31 @@ export class ElasticProviderAdapter implements ProviderAdapter {
   async testConnection(): Promise<boolean> {
     try {
       const resp = await this.client.ping();
-      return resp === true || (resp as unknown as { statusCode: number }).statusCode === 200;
+      const esOk = resp === true || (resp as unknown as { statusCode: number }).statusCode === 200;
+      if (!esOk) return false;
     } catch {
       return false;
     }
+
+    if (this.config.kibanaUrl) {
+      try {
+        const headers: Record<string, string> = { 'kbn-xsrf': 'true' };
+        if (this.config.auth.type === 'basic') {
+          const cred = Buffer.from(
+            `${this.config.auth.username}:${this.config.auth.password}`,
+          ).toString('base64');
+          headers['Authorization'] = `Basic ${cred}`;
+        } else {
+          headers['Authorization'] = `ApiKey ${this.config.auth.apiKey}`;
+        }
+        const resp = await fetch(`${this.config.kibanaUrl}/api/status`, { headers });
+        if (!resp.ok) return false;
+      } catch {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   async dispose(): Promise<void> {

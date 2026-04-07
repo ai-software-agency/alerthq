@@ -1,3 +1,4 @@
+import type { ZodType } from 'zod';
 import type { AlertDefinition } from '../types/alert.js';
 
 /**
@@ -41,3 +42,13 @@ export interface ProviderAdapter {
  * Each provider plugin default-exports a factory of this type.
  */
 export type ProviderFactory = () => ProviderAdapter;
+
+/**
+ * Shape of a provider plugin module after dynamic import.
+ * The `configSchema` export is optional — when present the plugin loader
+ * validates provider config at load time for fail-fast behavior.
+ */
+export interface ProviderModule {
+  default: ProviderFactory;
+  configSchema?: ZodType;
+}

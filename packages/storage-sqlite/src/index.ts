@@ -124,11 +124,22 @@ class SqliteStorageProvider implements StorageProvider {
     return row ? toSyncRun(row) : null;
   }
 
-  async listSyncRuns(limit?: number): Promise<SyncRun[]> {
-    const sql = limit
-      ? 'SELECT * FROM sync_runs WHERE version > 0 ORDER BY version DESC LIMIT ?'
-      : 'SELECT * FROM sync_runs WHERE version > 0 ORDER BY version DESC';
-    const rows = (limit ? this.db.prepare(sql).all(limit) : this.db.prepare(sql).all()) as RawSyncRun[];
+  async listSyncRuns(limit?: number, offset?: number): Promise<SyncRun[]> {
+    if (limit !== undefined && offset !== undefined) {
+      const rows = this.db
+        .prepare('SELECT * FROM sync_runs WHERE version > 0 ORDER BY version DESC LIMIT ? OFFSET ?')
+        .all(limit, offset) as RawSyncRun[];
+      return rows.map(toSyncRun);
+    }
+    if (limit !== undefined) {
+      const rows = this.db
+        .prepare('SELECT * FROM sync_runs WHERE version > 0 ORDER BY version DESC LIMIT ?')
+        .all(limit) as RawSyncRun[];
+      return rows.map(toSyncRun);
+    }
+    const rows = this.db
+      .prepare('SELECT * FROM sync_runs WHERE version > 0 ORDER BY version DESC')
+      .all() as RawSyncRun[];
     return rows.map(toSyncRun);
   }
 
@@ -167,7 +178,22 @@ class SqliteStorageProvider implements StorageProvider {
     })();
   }
 
-  async getAlertDefinitions(version: number): Promise<AlertDefinition[]> {
+  async getAlertDefinitions(
+    version: number,
+    opts?: { limit?: number; offset?: number },
+  ): Promise<AlertDefinition[]> {
+    if (opts?.limit !== undefined && opts.offset !== undefined) {
+      const rows = this.db
+        .prepare('SELECT * FROM alert_definitions WHERE version = ? LIMIT ? OFFSET ?')
+        .all(version, opts.limit, opts.offset) as RawAlert[];
+      return rows.map(toAlert);
+    }
+    if (opts?.limit !== undefined) {
+      const rows = this.db
+        .prepare('SELECT * FROM alert_definitions WHERE version = ? LIMIT ?')
+        .all(version, opts.limit) as RawAlert[];
+      return rows.map(toAlert);
+    }
     const rows = this.db
       .prepare('SELECT * FROM alert_definitions WHERE version = ?')
       .all(version) as RawAlert[];

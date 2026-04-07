@@ -84,6 +84,8 @@ function createLogger(): Logger {
   };
 }
 
+let _logger: Logger = createLogger();
+
 /**
  * Shared logger instance for alerthq.
  * Log level is controlled by the `ALERTHQ_LOG_LEVEL` environment variable
@@ -91,5 +93,31 @@ function createLogger(): Logger {
  *
  * Output is structured JSON — one object per line with `timestamp`, `level`,
  * and `msg` fields.
+ *
+ * Can be replaced via {@link setLogger} for testing or programmatic use.
  */
-export const logger: Logger = createLogger();
+export const logger: Logger = {
+  debug(message: string, ...args: unknown[]) {
+    _logger.debug(message, ...args);
+  },
+  info(message: string, ...args: unknown[]) {
+    _logger.info(message, ...args);
+  },
+  warn(message: string, ...args: unknown[]) {
+    _logger.warn(message, ...args);
+  },
+  error(message: string, ...args: unknown[]) {
+    _logger.error(message, ...args);
+  },
+};
+
+/**
+ * Replace the global logger implementation.
+ * Useful for injecting a spy/mock in tests or redirecting output
+ * in programmatic consumers.
+ *
+ * @param custom - Logger to use. Pass `undefined` to restore the default.
+ */
+export function setLogger(custom?: Logger): void {
+  _logger = custom ?? createLogger();
+}

@@ -4,7 +4,7 @@ export type { SyncRun } from './types/sync-run.js';
 export type { AlerthqConfig, StorageConfig, ProviderConfig, Context } from './types/config.js';
 
 // Plugin interfaces
-export type { ProviderAdapter, ProviderFactory } from './interfaces/provider.js';
+export type { ProviderAdapter, ProviderFactory, ProviderModule } from './interfaces/provider.js';
 export type { StorageProvider, StorageFactory } from './interfaces/storage.js';
 
 // Bootstrap
@@ -27,7 +27,7 @@ export type { RetryOptions } from './utils/retry.js';
 export { generateAlertId } from './utils/id.js';
 export { hashConfig } from './utils/hash.js';
 export { formatTable, formatCsv, formatJson } from './utils/format.js';
-export { logger } from './utils/logger.js';
+export { logger, setLogger } from './utils/logger.js';
 export type { Logger, LogLevel } from './utils/logger.js';
 
 // Config & plugin loaders (for advanced use / testing)

@@ -144,7 +144,14 @@ class PostgresStorageProvider implements StorageProvider {
     return rows.length > 0 ? toSyncRun(rows[0]) : null;
   }
 
-  async listSyncRuns(limit?: number): Promise<SyncRun[]> {
+  async listSyncRuns(limit?: number, offset?: number): Promise<SyncRun[]> {
+    if (limit !== undefined && offset !== undefined) {
+      const { rows } = await this.pool.query<RawSyncRun>(
+        'SELECT * FROM sync_runs WHERE version > 0 ORDER BY version DESC LIMIT $1 OFFSET $2',
+        [limit, offset],
+      );
+      return rows.map(toSyncRun);
+    }
     if (limit !== undefined) {
       const { rows } = await this.pool.query<RawSyncRun>(
         'SELECT * FROM sync_runs WHERE version > 0 ORDER BY version DESC LIMIT $1',
@@ -217,7 +224,24 @@ class PostgresStorageProvider implements StorageProvider {
     }
   }
 
-  async getAlertDefinitions(version: number): Promise<AlertDefinition[]> {
+  async getAlertDefinitions(
+    version: number,
+    opts?: { limit?: number; offset?: number },
+  ): Promise<AlertDefinition[]> {
+    if (opts?.limit !== undefined && opts.offset !== undefined) {
+      const { rows } = await this.pool.query<RawAlert>(
+        'SELECT * FROM alert_definitions WHERE version = $1 LIMIT $2 OFFSET $3',
+        [version, opts.limit, opts.offset],
+      );
+      return rows.map(toAlert);
+    }
+    if (opts?.limit !== undefined) {
+      const { rows } = await this.pool.query<RawAlert>(
+        'SELECT * FROM alert_definitions WHERE version = $1 LIMIT $2',
+        [version, opts.limit],
+      );
+      return rows.map(toAlert);
+    }
     const { rows } = await this.pool.query<RawAlert>(
       'SELECT * FROM alert_definitions WHERE version = $1',
       [version],

@@ -7,3 +7,6 @@ alerthq.config.yml
 .DS_Store
 .local
 *.db
+coverage
+.cursor/rules/
+.cursor/skills/

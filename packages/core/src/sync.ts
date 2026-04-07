@@ -13,6 +13,9 @@ export interface SyncOptions {
 
   /** Optional description / context for this sync run. */
   description?: string;
+
+  /** AbortSignal to cancel the sync run early (e.g. on SIGINT). */
+  signal?: AbortSignal;
 }
 
 /**
@@ -50,6 +53,10 @@ export async function sync(ctx: Context, opts?: SyncOptions): Promise<SyncRun | 
   }
 
   for (const [name, adapter] of providerEntries) {
+    if (opts?.signal?.aborted) {
+      throw opts.signal.reason ?? new Error('Sync aborted');
+    }
+
     try {
       logger.info(`Fetching alerts from ${name}...`);
       const alerts = await adapter.fetchAlerts();
@@ -60,6 +67,10 @@ export async function sync(ctx: Context, opts?: SyncOptions): Promise<SyncRun | 
       providerStatus[name] = 'error';
       logger.error(`Failed to fetch from ${name}: ${(err as Error).message}`);
     }
+  }
+
+  if (opts?.signal?.aborted) {
+    throw opts.signal.reason ?? new Error('Sync aborted');
   }
 
   const latestRun = await storage.getLatestSyncRun();

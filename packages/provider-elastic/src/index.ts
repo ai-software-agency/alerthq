@@ -3,6 +3,7 @@ import { ElasticProviderAdapter } from './adapter.js';
 
 export { ElasticProviderAdapter } from './adapter.js';
 export type { ElasticProviderConfig, ElasticAuth } from './types.js';
+export { elasticConfigSchema as configSchema } from './schema.js';
 
 const createElasticProvider: ProviderFactory = () => new ElasticProviderAdapter();
 

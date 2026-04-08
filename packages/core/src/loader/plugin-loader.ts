@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 import { resolve as pathResolve } from 'node:path';
+import type { ZodType } from 'zod';
 import type { ProviderAdapter } from '../interfaces/provider.js';
 import type { StorageProvider } from '../interfaces/storage.js';
 import type { AlerthqConfig, ProviderConfig } from '../types/config.js';
@@ -42,11 +43,14 @@ function resolveProviderPackage(providerName: string, config: ProviderConfig): s
 }
 
 /**
- * Dynamically import a module and return its default export.
+ * Dynamically import a module and return the full module (for schema access)
+ * along with its default export.
  *
  * @throws With an actionable install message if the import fails.
  */
-async function importPlugin(packageName: string): Promise<unknown> {
+async function importPluginModule(
+  packageName: string,
+): Promise<{ factory: unknown; configSchema?: ZodType }> {
   // Try multiple resolution strategies to support pnpm strict mode,
   // monorepo development, and standard npm installs.
   const strategies = [
@@ -73,7 +77,10 @@ async function importPlugin(packageName: string): Promise<unknown> {
     try {
       const specifier = resolve();
       const mod = await import(specifier);
-      return mod.default ?? mod;
+      return {
+        factory: mod.default ?? mod,
+        configSchema: mod.configSchema,
+      };
     } catch {
       continue;
     }
@@ -136,7 +143,7 @@ export async function loadStoragePlugin(config: AlerthqConfig): Promise<StorageP
 
   logger.debug(`Loading storage plugin: ${packageName}`);
 
-  const factory = await importPlugin(packageName);
+  const { factory } = await importPluginModule(packageName);
 
   if (typeof factory !== 'function') {
     throw new Error(
@@ -180,7 +187,7 @@ export async function loadProviderPlugins(
     const packageName = resolveProviderPackage(name, providerConfig);
     logger.debug(`Loading provider plugin: ${packageName}`);
 
-    const factory = await importPlugin(packageName);
+    const { factory, configSchema } = await importPluginModule(packageName);
 
     if (typeof factory !== 'function') {
       throw new Error(
@@ -199,6 +206,15 @@ export async function loadProviderPlugins(
         pluginConfig[key] = value;
       }
     }
+
+    if (configSchema) {
+      const result = configSchema.safeParse(pluginConfig);
+      if (!result.success) {
+        const issues = result.error.issues.map((i) => i.message).join('; ');
+        throw new Error(`[${name}] invalid config: ${issues}`);
+      }
+    }
+
     await adapter.initialize(pluginConfig);
 
     logger.info(`Provider plugin loaded: ${adapter.name}`);

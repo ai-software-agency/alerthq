@@ -16,11 +16,13 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint src/"
   },
   "dependencies": {
     "@azure/identity": "^4.5.0",
-    "@azure/arm-monitor": "^7.0.0"
+    "@azure/arm-monitor": "^7.0.0",
+    "zod": "^3.24.0"
   },
   "peerDependencies": {
     "@alerthq/core": "workspace:*"

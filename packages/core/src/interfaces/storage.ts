@@ -36,15 +36,18 @@ export interface StorageProvider {
   getSyncRun(version: number): Promise<SyncRun | null>;
 
   /** List sync runs in reverse chronological order. */
-  listSyncRuns(limit?: number): Promise<SyncRun[]>;
+  listSyncRuns(limit?: number, offset?: number): Promise<SyncRun[]>;
 
   // ---- Alert definitions ----
 
   /** Save a batch of alert definitions for a given version. */
   saveAlertDefinitions(version: number, alerts: AlertDefinition[]): Promise<void>;
 
-  /** Get all alert definitions for a given version. */
-  getAlertDefinitions(version: number): Promise<AlertDefinition[]>;
+  /** Get alert definitions for a given version, with optional pagination. */
+  getAlertDefinitions(
+    version: number,
+    opts?: { limit?: number; offset?: number },
+  ): Promise<AlertDefinition[]>;
 
   /** Remove a single alert definition by ID and version. Returns `true` if found and removed. */
   removeAlertDefinition(version: number, alertId: string): Promise<boolean>;

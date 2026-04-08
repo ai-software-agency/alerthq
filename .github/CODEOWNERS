@@ -1,0 +1,8 @@
+# Default owners for all files
+* @dhruvin
+
+# Core package
+packages/core/ @dhruvin
+
+# CLI package
+packages/cli/ @dhruvin

@@ -1,7 +1,7 @@
 import { DefaultAzureCredential } from '@azure/identity';
 import { MonitorClient } from '@azure/arm-monitor';
 import type { ProviderAdapter, AlertDefinition } from '@alerthq/core';
-import { logger } from '@alerthq/core';
+import { logger, withRetry } from '@alerthq/core';
 import type {
   AzureMonitorProviderConfig,
   AzureMetricAlertResource,
@@ -85,38 +85,41 @@ export class AzureMonitorProviderAdapter implements ProviderAdapter {
   ): Promise<AlertDefinition[]> {
     const alerts: AlertDefinition[] = [];
 
-    // Fetch metric alerts
     try {
-      for await (const resource of client.metricAlerts.listBySubscription()) {
-        const typed = resource as unknown as AzureMetricAlertResource;
-        alerts.push(mapMetricAlert(typed));
-      }
+      await withRetry(async () => {
+        for await (const resource of client.metricAlerts.listBySubscription()) {
+          const typed = resource as unknown as AzureMetricAlertResource;
+          alerts.push(mapMetricAlert(typed));
+        }
+      });
     } catch (err) {
-      logger.info(
+      logger.warn(
         `[azure-monitor] Failed to fetch metric alerts for subscription ${subscriptionId}: ${String(err)}`,
       );
     }
 
-    // Fetch activity log alerts
     try {
-      for await (const resource of client.activityLogAlerts.listBySubscriptionId()) {
-        const typed = resource as unknown as AzureActivityLogAlertResource;
-        alerts.push(mapActivityLogAlert(typed));
-      }
+      await withRetry(async () => {
+        for await (const resource of client.activityLogAlerts.listBySubscriptionId()) {
+          const typed = resource as unknown as AzureActivityLogAlertResource;
+          alerts.push(mapActivityLogAlert(typed));
+        }
+      });
     } catch (err) {
-      logger.info(
+      logger.warn(
         `[azure-monitor] Failed to fetch activity log alerts for subscription ${subscriptionId}: ${String(err)}`,
       );
     }
 
-    // Fetch scheduled query rules
     try {
-      for await (const resource of client.scheduledQueryRules.listBySubscription()) {
-        const typed = resource as unknown as AzureScheduledQueryRuleResource;
-        alerts.push(mapScheduledQueryRule(typed));
-      }
+      await withRetry(async () => {
+        for await (const resource of client.scheduledQueryRules.listBySubscription()) {
+          const typed = resource as unknown as AzureScheduledQueryRuleResource;
+          alerts.push(mapScheduledQueryRule(typed));
+        }
+      });
     } catch (err) {
-      logger.info(
+      logger.warn(
         `[azure-monitor] Failed to fetch scheduled query rules for subscription ${subscriptionId}: ${String(err)}`,
       );
     }

@@ -3,7 +3,18 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [],
-  "linked": [],
+  "linked": [
+    [
+      "@alerthq/core",
+      "@alerthq/cli",
+      "@alerthq/storage-sqlite",
+      "@alerthq/storage-postgresql",
+      "@alerthq/provider-aws-cloudwatch",
+      "@alerthq/provider-elastic",
+      "@alerthq/provider-mongodb-atlas",
+      "@alerthq/provider-azure-monitor"
+    ]
+  ],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",

@@ -12,7 +12,10 @@
       "@alerthq/provider-aws-cloudwatch",
       "@alerthq/provider-elastic",
       "@alerthq/provider-mongodb-atlas",
-      "@alerthq/provider-azure-monitor"
+      "@alerthq/provider-azure-monitor",
+      "@alerthq/provider-datadog",
+      "@alerthq/provider-gcp-monitoring",
+      "@alerthq/provider-grafana"
     ]
   ],
   "access": "public",

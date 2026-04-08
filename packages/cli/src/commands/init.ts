@@ -10,6 +10,9 @@ const PROVIDER_ENV_HINTS: Record<string, string[]> = {
   'elastic': ['ALERTHQ_ELASTIC_USERNAME', 'ALERTHQ_ELASTIC_PASSWORD'],
   'mongodb-atlas': ['ALERTHQ_ATLAS_PUBLIC_KEY', 'ALERTHQ_ATLAS_PRIVATE_KEY'],
   'azure-monitor': [],
+  'datadog': ['DD_API_KEY', 'DD_APP_KEY'],
+  'gcp-monitoring': ['GOOGLE_APPLICATION_CREDENTIALS'],
+  'grafana': ['GRAFANA_URL', 'GRAFANA_API_KEY'],
 };
 
 const STORAGE_ENV_HINTS: Record<string, string[]> = {
@@ -80,7 +83,7 @@ export function registerInit(program: Command): void {
         console.log(`\nWrote ${configPath}`);
 
         // Print install instructions
-        const packagesToInstall = [storagePick.package];
+        const packagesToInstall: string[] = [storagePick.package];
         const allEnvVars = [...(STORAGE_ENV_HINTS[storagePick.name] ?? [])];
         for (const prov of selectedProviders) {
           packagesToInstall.push(prov.package);

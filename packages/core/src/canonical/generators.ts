@@ -56,6 +56,33 @@ export function generateLlmHelp(): Record<string, unknown> {
     severities: [...META.severities],
     exportFormats: [...META.exportFormats],
 
+    architecture:
+      'alerthq follows a sync-version-diff model. Each `sync` fetches alert definitions from ' +
+      'configured providers, normalizes them into a common AlertDefinition schema, and stores ' +
+      'them as a new versioned snapshot. The `diff` command compares any two versions to show ' +
+      'added, removed, and modified alerts (drift detection). Overlay tags and manual entries ' +
+      'persist across syncs. The tool is strictly read-only — it never creates, modifies, or ' +
+      'deletes alerts in any provider.',
+
+    alertDefinitionSchema: [
+      { field: 'id', type: 'string', description: 'First 12 chars of sha256(source + ":" + sourceId)' },
+      { field: 'version', type: 'number', description: 'FK to sync_runs.version; 0 = manual entry' },
+      { field: 'source', type: 'string', description: 'Provider key (e.g. "aws-cloudwatch") or "manual"' },
+      { field: 'sourceId', type: 'string', description: "Provider's native identifier or generated UUID" },
+      { field: 'name', type: 'string', description: 'Human-readable alert name' },
+      { field: 'description', type: 'string', description: 'Alert description' },
+      { field: 'enabled', type: 'boolean', description: 'Whether the alert is enabled in the source system' },
+      { field: 'severity', type: 'Severity', description: 'Normalized severity: critical | warning | info | unknown' },
+      { field: 'conditionSummary', type: 'string', description: 'Human-readable condition / threshold summary' },
+      { field: 'notificationTargets', type: 'string[]', description: 'Deduplicated notification targets (SNS ARNs, emails, etc.)' },
+      { field: 'tags', type: 'Record<string, string>', description: 'Merged tag map: provider tags + user overlay tags' },
+      { field: 'owner', type: 'string', description: 'Alert owner (team, user, or empty string)' },
+      { field: 'rawConfig', type: 'Record<string, unknown>', description: 'Raw provider configuration for reference' },
+      { field: 'configHash', type: 'string', description: 'sha256(rawConfig) — used for drift detection' },
+      { field: 'lastModifiedAt', type: 'string | null', description: 'Last modification timestamp from provider' },
+      { field: 'discoveredAt', type: 'string', description: 'ISO 8601 timestamp of first discovery' },
+    ],
+
     storageBackends: META.storageBackends.map((s) => ({
       name: s.name,
       package: s.package,
@@ -64,6 +91,7 @@ export function generateLlmHelp(): Record<string, unknown> {
     providers: META.providers.map((p) => ({
       name: p.name,
       package: p.package,
+      configFields: p.configFields,
     })),
 
     commands: CLI_COMMANDS.map((cmd: CliCommand) => ({
@@ -79,14 +107,33 @@ export function generateLlmHelp(): Record<string, unknown> {
     })),
 
     configExample: [
+      '# alerthq.config.yml',
       'storage:',
-      "  provider: 'sqlite'",
+      '  provider: sqlite',
       '  sqlite:',
-      "    path: './alerthq.db'",
+      '    path: ./alerthq.db',
+      '',
+      '  # -- OR PostgreSQL --',
+      '  # provider: postgresql',
+      '  # postgresql:',
+      '  #   connectionString: ${DATABASE_URL}',
       '',
       'providers:',
       '  aws-cloudwatch:',
       '    enabled: true',
+      '    regions:',
+      '      - us-east-1',
+      '      - eu-west-1',
+      '',
+      '  datadog:',
+      '    enabled: true',
+      '    apiKey: ${DD_API_KEY}',
+      '    appKey: ${DD_APP_KEY}',
+      '',
+      '  grafana:',
+      '    enabled: true',
+      '    url: https://grafana.example.com',
+      '    apiKey: ${GRAFANA_API_KEY}',
     ].join('\n'),
   };
 }

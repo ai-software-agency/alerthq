@@ -20,7 +20,7 @@
     "lint": "eslint src/"
   },
   "dependencies": {
-    "dotenv": "^16.4.0",
+    "dotenv": "^17.4.1",
     "uuid": "^11.0.0",
     "yaml": "^2.6.0",
     "zod": "^3.24.0"

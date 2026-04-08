@@ -39,7 +39,7 @@ Run `pnpm test` to catch drift before committing.
 - **`packages/core`**: Domain types, interfaces, config/plugin loading, canonical data
 - **`packages/cli`**: Commander-based CLI, commands pull from canonical
 - **`packages/storage-*`**: Storage backends (sqlite, postgresql)
-- **`packages/provider-*`**: Alert provider adapters (aws-cloudwatch, elastic, mongodb-atlas, azure-monitor)
+- **`packages/provider-*`**: Alert provider adapters (aws-cloudwatch, elastic, mongodb-atlas, azure-monitor, datadog, gcp-monitoring, grafana)
 
 ## Key Patterns
 

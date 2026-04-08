@@ -32,7 +32,10 @@
     "@alerthq/provider-aws-cloudwatch": "workspace:*",
     "@alerthq/provider-elastic": "workspace:*",
     "@alerthq/provider-mongodb-atlas": "workspace:*",
-    "@alerthq/provider-azure-monitor": "workspace:*"
+    "@alerthq/provider-azure-monitor": "workspace:*",
+    "@alerthq/provider-datadog": "workspace:*",
+    "@alerthq/provider-gcp-monitoring": "workspace:*",
+    "@alerthq/provider-grafana": "workspace:*"
   },
   "peerDependenciesMeta": {
     "@alerthq/storage-sqlite": { "optional": true },
@@ -40,7 +43,10 @@
     "@alerthq/provider-aws-cloudwatch": { "optional": true },
     "@alerthq/provider-elastic": { "optional": true },
     "@alerthq/provider-mongodb-atlas": { "optional": true },
-    "@alerthq/provider-azure-monitor": { "optional": true }
+    "@alerthq/provider-azure-monitor": { "optional": true },
+    "@alerthq/provider-datadog": { "optional": true },
+    "@alerthq/provider-gcp-monitoring": { "optional": true },
+    "@alerthq/provider-grafana": { "optional": true }
   },
   "devDependencies": {
     "@alerthq/core": "workspace:*",
@@ -50,6 +56,9 @@
     "@alerthq/provider-elastic": "workspace:*",
     "@alerthq/provider-mongodb-atlas": "workspace:*",
     "@alerthq/provider-azure-monitor": "workspace:*",
+    "@alerthq/provider-datadog": "workspace:*",
+    "@alerthq/provider-gcp-monitoring": "workspace:*",
+    "@alerthq/provider-grafana": "workspace:*",
     "@types/node": "^22.0.0"
   },
   "license": "MIT"

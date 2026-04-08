@@ -1,0 +1,29 @@
+{
+  "name": "@alerthq/provider-grafana",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Grafana alert provider for alerthq",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "zod": "^3.24.0"
+  },
+  "peerDependencies": {
+    "@alerthq/core": "workspace:*"
+  },
+  "license": "MIT"
+}

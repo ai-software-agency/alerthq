@@ -1,4 +1,4 @@
-# Claude Code Instructions for alerthq
+# Agent Instructions for alerthq
 
 alerthq is a monorepo for discovering and normalizing alert definitions across cloud providers (AWS CloudWatch, Datadog, Grafana, etc.).
 

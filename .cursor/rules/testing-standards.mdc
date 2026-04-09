@@ -1,0 +1,11 @@
+---
+description: Testing standards for the alerthq monorepo
+globs: **/tests/**
+alwaysApply: false
+---
+
+# Testing Standards
+
+Read and follow the "Testing Standards" section in `CONTRIBUTING.md`.
+
+Key rules: Vitest with explicit imports (no globals), `.js` extensions on source imports, no `any` in fixtures, no SDK mocking in unit tests, mapper tests are the priority for providers.

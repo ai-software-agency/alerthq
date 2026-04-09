@@ -14,7 +14,7 @@ Read [research.md](research.md) for the full checklist. Use web search to find:
 
 1. **Official SDK** — Is there an npm package? (e.g. `@aws-sdk/client-cloudwatch`, `@elastic/elasticsearch`)
 2. **Authentication** — What auth models are supported? (API keys, OAuth, IAM, digest, tokens)
-3. **API endpoints** — Which endpoints return alert *definitions* (not firings/events)?
+3. **API endpoints** — Which endpoints return alert _definitions_ (not firings/events)?
 4. **Alert type taxonomy** — What kinds of alerts exist? (metric, log, anomaly, uptime, etc.)
 5. **Response shapes** — What fields come back? What maps to `AlertDefinition`?
 6. **Pagination** — Cursor, offset, page number, async iterator?
@@ -111,27 +111,32 @@ Generate a standardized README using the template in [readme-template.md](readme
 ## Phase 4: Register in Canonical
 
 1. Add to `META.providers` in `packages/core/src/canonical/meta.ts`:
+
    ```typescript
    { name: '<id>', package: '@alerthq/provider-<id>', description: '<Description> alert provider' },
    ```
 
 2. Add to `META.packages` in the same file:
+
    ```typescript
    { name: '@alerthq/provider-<id>', description: '<Description> alert provider' },
    ```
 
 3. Add as optional peer dependency in `packages/cli/package.json`:
+
    ```json
    // peerDependencies
    "@alerthq/provider-<id>": "workspace:*"
    ```
 
 4. Mark as optional in `peerDependenciesMeta` in `packages/cli/package.json`:
+
    ```json
    "@alerthq/provider-<id>": { "optional": true }
    ```
 
 5. Add as devDependency in `packages/cli/package.json` (for build/test resolution):
+
    ```json
    "@alerthq/provider-<id>": "workspace:*"
    ```

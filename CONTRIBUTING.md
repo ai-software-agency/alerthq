@@ -23,15 +23,15 @@ All outward-facing text (CLI help, README, npm descriptions, `--llm-help`) is dr
 
 ### Where to Make Changes
 
-| Want to change… | Edit this file |
-|-----------------|---------------|
-| CLI command name, description, options, examples | `packages/core/src/canonical/cli.ts` |
-| Project description, npm description, tagline | `packages/core/src/canonical/meta.ts` |
-| Package list, provider list, storage backends | `packages/core/src/canonical/meta.ts` |
-| Severities, export formats | `packages/core/src/canonical/meta.ts` |
-| Help text formatting, --llm-help structure | `packages/core/src/canonical/generators.ts` |
-| README content | Update canonical data first, then regenerate `README.md` to match |
-| CLI package.json description | Must match `META.npmDescription` in `meta.ts` |
+| Want to change…                                  | Edit this file                                                    |
+| ------------------------------------------------ | ----------------------------------------------------------------- |
+| CLI command name, description, options, examples | `packages/core/src/canonical/cli.ts`                              |
+| Project description, npm description, tagline    | `packages/core/src/canonical/meta.ts`                             |
+| Package list, provider list, storage backends    | `packages/core/src/canonical/meta.ts`                             |
+| Severities, export formats                       | `packages/core/src/canonical/meta.ts`                             |
+| Help text formatting, --llm-help structure       | `packages/core/src/canonical/generators.ts`                       |
+| README content                                   | Update canonical data first, then regenerate `README.md` to match |
+| CLI package.json description                     | Must match `META.npmDescription` in `meta.ts`                     |
 
 ### What NOT to Edit Directly
 
@@ -43,6 +43,7 @@ All outward-facing text (CLI help, README, npm descriptions, `--llm-help`) is dr
 ### Drift Tests
 
 `packages/core/tests/canonical-drift.test.ts` will fail if any surface goes out of sync:
+
 - README must reference all command names and package names
 - --help must include all command descriptions
 - --llm-help must include all commands, providers, and storage backends
@@ -80,13 +81,13 @@ import { CloudWatchApiClient } from './client';
 
 ### Naming
 
-| Kind | Convention | Example |
-|------|-----------|---------|
-| Files | kebab-case | `plugin-loader.ts`, `config-schema.ts` |
-| Interfaces / Types | PascalCase | `ProviderAdapter`, `AlertDefinition` |
-| Classes | PascalCase | `CloudWatchAdapter`, `SqliteStorageProvider` |
-| Functions | camelCase | `fetchAlerts`, `mapAlarmToAlertDefinition` |
-| Constants | UPPER_SNAKE | `DEFAULT_PAGE_SIZE`, `PROVIDER_NAME` |
+| Kind               | Convention  | Example                                      |
+| ------------------ | ----------- | -------------------------------------------- |
+| Files              | kebab-case  | `plugin-loader.ts`, `config-schema.ts`       |
+| Interfaces / Types | PascalCase  | `ProviderAdapter`, `AlertDefinition`         |
+| Classes            | PascalCase  | `CloudWatchAdapter`, `SqliteStorageProvider` |
+| Functions          | camelCase   | `fetchAlerts`, `mapAlarmToAlertDefinition`   |
+| Constants          | UPPER_SNAKE | `DEFAULT_PAGE_SIZE`, `PROVIDER_NAME`         |
 
 ### Error Handling
 
@@ -100,7 +101,9 @@ import { CloudWatchApiClient } from './client';
 throw new Error('[mongodb-atlas] config.publicKey is required and must be a string');
 
 // wrong — silent catch
-try { await fetchData(); } catch {}
+try {
+  await fetchData();
+} catch {}
 ```
 
 ### Async
@@ -167,7 +170,7 @@ import { describe, it, expect } from 'vitest';
 import { mapAlarmToAlertDefinition } from '../src/mapper.js';
 
 const fixture = {
-  alarm: { AlarmArn: 'arn:aws:...', AlarmName: 'high-cpu', /* ... */ },
+  alarm: { AlarmArn: 'arn:aws:...', AlarmName: 'high-cpu' /* ... */ },
   tags: { severity: 'critical', owner: 'platform-team' },
 };
 

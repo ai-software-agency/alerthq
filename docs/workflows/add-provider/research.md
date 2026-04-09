@@ -71,6 +71,7 @@ For each alert type:
 ## Output
 
 After completing this checklist, you should have enough information to write:
+
 - `types.ts` — config interface + API response DTOs
 - `client.ts` — which SDK methods or HTTP calls to make
 - `mapper.ts` — how to map every field to `AlertDefinition`

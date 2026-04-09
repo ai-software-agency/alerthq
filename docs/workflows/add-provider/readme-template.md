@@ -11,10 +11,10 @@ Use this template for every provider package README. Replace all placeholders an
 
 ## Supported Alert Types
 
-| Alert Type | API Source | Notes |
-|------------|-----------|-------|
-| <Type 1> | <endpoint or SDK method> | <any caveats> |
-| <Type 2> | <endpoint or SDK method> | |
+| Alert Type | API Source               | Notes         |
+| ---------- | ------------------------ | ------------- |
+| <Type 1>   | <endpoint or SDK method> | <any caveats> |
+| <Type 2>   | <endpoint or SDK method> |               |
 
 ## Authentication
 
@@ -30,16 +30,16 @@ Add to your `alerthq.yaml`:
 
 \`\`\`yaml
 providers:
-  <id>:
-    enabled: true
-    <field1>: <example value>
-    <field2>: <example value>
+<id>:
+enabled: true
+<field1>: <example value>
+<field2>: <example value>
 \`\`\`
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `<field1>` | `string` | Yes | — | <description> |
-| `<field2>` | `string[]` | No | `[]` | <description> |
+| Field      | Type       | Required | Default | Description   |
+| ---------- | ---------- | -------- | ------- | ------------- |
+| `<field1>` | `string`   | Yes      | —       | <description> |
+| `<field2>` | `string[]` | No       | `[]`    | <description> |
 
 ## Required Permissions
 
@@ -52,19 +52,19 @@ providers:
 
 How provider-native fields map to the normalized `AlertDefinition` schema:
 
-| AlertDefinition Field | Source |
-|-----------------------|--------|
-| `id` | `generateAlertId('<id>', <native unique ID field>)` |
-| `sourceId` | `<native unique ID field>` |
-| `name` | `<native name field>` |
-| `description` | `<native description field>` |
-| `enabled` | `<native enabled field>` |
-| `severity` | `<native severity field>` mapped to critical/warning/info/unknown |
-| `conditionSummary` | Built from `<threshold/condition fields>` |
-| `notificationTargets` | `<native notification fields>` |
-| `tags` | `<native tags/labels field>` |
-| `owner` | `<native owner/creator field or empty>` |
-| `lastModifiedAt` | `<native timestamp field>` |
+| AlertDefinition Field | Source                                                            |
+| --------------------- | ----------------------------------------------------------------- |
+| `id`                  | `generateAlertId('<id>', <native unique ID field>)`               |
+| `sourceId`            | `<native unique ID field>`                                        |
+| `name`                | `<native name field>`                                             |
+| `description`         | `<native description field>`                                      |
+| `enabled`             | `<native enabled field>`                                          |
+| `severity`            | `<native severity field>` mapped to critical/warning/info/unknown |
+| `conditionSummary`    | Built from `<threshold/condition fields>`                         |
+| `notificationTargets` | `<native notification fields>`                                    |
+| `tags`                | `<native tags/labels field>`                                      |
+| `owner`               | `<native owner/creator field or empty>`                           |
+| `lastModifiedAt`      | `<native timestamp field>`                                        |
 
 ## Limitations
 

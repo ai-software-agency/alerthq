@@ -8,5 +8,6 @@ alerthq.config.yml
 .local
 *.db
 coverage
+marketing
 .cursor/rules/
 .cursor/skills/

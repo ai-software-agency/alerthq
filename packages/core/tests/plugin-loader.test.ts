@@ -1,22 +1,23 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import {
+  loadStoragePlugin,
+  loadProviderPlugins,
+  _internal,
+} from '../src/loader/plugin-loader.js';
 
 describe('plugin loader validation', () => {
-  /**
-   * We test the duck-type validation by directly importing the module
-   * and exercising its public API with mock dynamic imports.
-   */
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('rejects a storage plugin missing required methods', async () => {
-    // Mock a plugin that's missing methods
-    vi.doMock('@alerthq/storage-badplugin', () => ({
-      default: () => ({
+    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+      factory: () => ({
         name: 'bad',
         initialize: vi.fn(),
         // missing all other required methods
       }),
-    }));
-
-    const { loadStoragePlugin } = await import('../src/loader/plugin-loader.js');
+    });
 
     const config = {
       storage: { provider: 'badplugin' },
@@ -24,33 +25,27 @@ describe('plugin loader validation', () => {
     };
 
     await expect(loadStoragePlugin(config)).rejects.toThrow(/missing required methods/);
-
-    vi.doUnmock('@alerthq/storage-badplugin');
   });
 
   it('rejects a plugin that does not export a factory function', async () => {
-    vi.doMock('@alerthq/storage-notafunc', () => ({
-      default: 'not a function',
-    }));
-
-    const { loadStoragePlugin } = await import('../src/loader/plugin-loader.js');
+    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+      factory: 'not a function',
+    });
 
     const config = {
       storage: { provider: 'notafunc' },
       providers: {},
     };
 
-    await expect(loadStoragePlugin(config)).rejects.toThrow(/does not export a factory function/);
-
-    vi.doUnmock('@alerthq/storage-notafunc');
+    await expect(loadStoragePlugin(config)).rejects.toThrow(
+      /does not export a factory function/,
+    );
   });
 
   it('rejects a plugin whose factory returns a non-object', async () => {
-    vi.doMock('@alerthq/storage-returnsnull', () => ({
-      default: () => null,
-    }));
-
-    const { loadStoragePlugin } = await import('../src/loader/plugin-loader.js');
+    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+      factory: () => null,
+    });
 
     const config = {
       storage: { provider: 'returnsnull' },
@@ -58,19 +53,15 @@ describe('plugin loader validation', () => {
     };
 
     await expect(loadStoragePlugin(config)).rejects.toThrow(/did not return an object/);
-
-    vi.doUnmock('@alerthq/storage-returnsnull');
   });
 
   it('rejects a plugin with empty name', async () => {
-    vi.doMock('@alerthq/storage-emptyname', () => ({
-      default: () => ({
+    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+      factory: () => ({
         name: '',
         initialize: vi.fn(),
       }),
-    }));
-
-    const { loadStoragePlugin } = await import('../src/loader/plugin-loader.js');
+    });
 
     const config = {
       storage: { provider: 'emptyname' },
@@ -78,13 +69,9 @@ describe('plugin loader validation', () => {
     };
 
     await expect(loadStoragePlugin(config)).rejects.toThrow(/missing a 'name' property/);
-
-    vi.doUnmock('@alerthq/storage-emptyname');
   });
 
   it('throws an actionable message when plugin is not installed', async () => {
-    const { loadStoragePlugin } = await import('../src/loader/plugin-loader.js');
-
     const config = {
       storage: { provider: 'nonexistent' },
       providers: {},
@@ -116,11 +103,9 @@ describe('plugin loader validation', () => {
       getOverlayTags: vi.fn(),
     };
 
-    vi.doMock('@alerthq/storage-validstorage', () => ({
-      default: () => mockStorage,
-    }));
-
-    const { loadStoragePlugin } = await import('../src/loader/plugin-loader.js');
+    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+      factory: () => mockStorage,
+    });
 
     const config = {
       storage: { provider: 'validstorage', validstorage: { path: './test.db' } },
@@ -130,13 +115,9 @@ describe('plugin loader validation', () => {
     const result = await loadStoragePlugin(config);
     expect(result.name).toBe('test-storage');
     expect(mockStorage.initialize).toHaveBeenCalledWith({ path: './test.db' });
-
-    vi.doUnmock('@alerthq/storage-validstorage');
   });
 
   it('skips disabled providers', async () => {
-    const { loadProviderPlugins } = await import('../src/loader/plugin-loader.js');
-
     const config = {
       storage: { provider: 'sqlite' },
       providers: {
@@ -156,11 +137,9 @@ describe('plugin loader validation', () => {
       testConnection: vi.fn().mockResolvedValue(true),
     };
 
-    vi.doMock('my-custom-provider', () => ({
-      default: () => mockAdapter,
-    }));
-
-    const { loadProviderPlugins } = await import('../src/loader/plugin-loader.js');
+    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+      factory: () => mockAdapter,
+    });
 
     const config = {
       storage: { provider: 'sqlite' },
@@ -176,7 +155,5 @@ describe('plugin loader validation', () => {
     const result = await loadProviderPlugins(config);
     expect(result['custom']!.name).toBe('custom-provider');
     expect(mockAdapter.initialize).toHaveBeenCalledWith({ apiKey: 'test-key' });
-
-    vi.doUnmock('my-custom-provider');
   });
 });

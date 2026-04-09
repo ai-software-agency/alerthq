@@ -1,8 +1,25 @@
 {
   "name": "@alerthq/provider-elastic",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "Elastic Watcher + Kibana Rules alert provider for alerthq",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ai-software-agency/alerthq.git",
+    "directory": "packages/provider-elastic"
+  },
+  "homepage": "https://github.com/ai-software-agency/alerthq#readme",
+  "bugs": "https://github.com/ai-software-agency/alerthq/issues",
+  "keywords": [
+    "alerthq",
+    "provider",
+    "elastic",
+    "elasticsearch",
+    "kibana",
+    "watcher",
+    "alerts",
+    "monitoring"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -12,7 +29,9 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "test": "vitest run --passWithNoTests",

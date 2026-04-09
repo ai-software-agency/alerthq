@@ -1,8 +1,26 @@
 {
   "name": "@alerthq/cli",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "Unified CLI for cloud alert definitions — sync, diff, tag, export. AI agent? Run: npx alerthq --llm-help",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ai-software-agency/alerthq.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/ai-software-agency/alerthq#readme",
+  "bugs": "https://github.com/ai-software-agency/alerthq/issues",
+  "keywords": [
+    "alerts",
+    "monitoring",
+    "cli",
+    "observability",
+    "cloud",
+    "devops",
+    "sre",
+    "drift-detection",
+    "alerthq"
+  ],
   "bin": {
     "alerthq": "./dist/index.js"
   },
@@ -15,7 +33,9 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "test": "vitest run",
@@ -23,10 +43,10 @@
     "lint": "eslint src/"
   },
   "dependencies": {
+    "@alerthq/core": "workspace:*",
     "commander": "^13.0.0"
   },
   "peerDependencies": {
-    "@alerthq/core": "workspace:*",
     "@alerthq/storage-sqlite": "workspace:*",
     "@alerthq/storage-postgresql": "workspace:*",
     "@alerthq/provider-aws-cloudwatch": "workspace:*",
@@ -38,18 +58,35 @@
     "@alerthq/provider-grafana": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@alerthq/storage-sqlite": { "optional": true },
-    "@alerthq/storage-postgresql": { "optional": true },
-    "@alerthq/provider-aws-cloudwatch": { "optional": true },
-    "@alerthq/provider-elastic": { "optional": true },
-    "@alerthq/provider-mongodb-atlas": { "optional": true },
-    "@alerthq/provider-azure-monitor": { "optional": true },
-    "@alerthq/provider-datadog": { "optional": true },
-    "@alerthq/provider-gcp-monitoring": { "optional": true },
-    "@alerthq/provider-grafana": { "optional": true }
+    "@alerthq/storage-sqlite": {
+      "optional": true
+    },
+    "@alerthq/storage-postgresql": {
+      "optional": true
+    },
+    "@alerthq/provider-aws-cloudwatch": {
+      "optional": true
+    },
+    "@alerthq/provider-elastic": {
+      "optional": true
+    },
+    "@alerthq/provider-mongodb-atlas": {
+      "optional": true
+    },
+    "@alerthq/provider-azure-monitor": {
+      "optional": true
+    },
+    "@alerthq/provider-datadog": {
+      "optional": true
+    },
+    "@alerthq/provider-gcp-monitoring": {
+      "optional": true
+    },
+    "@alerthq/provider-grafana": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@alerthq/core": "workspace:*",
     "@alerthq/storage-sqlite": "workspace:*",
     "@alerthq/storage-postgresql": "workspace:*",
     "@alerthq/provider-aws-cloudwatch": "workspace:*",

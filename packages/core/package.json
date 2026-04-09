@@ -1,8 +1,24 @@
 {
   "name": "@alerthq/core",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "Core library for alerthq — domain types, plugin interfaces, config/plugin loading, and core functions",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ai-software-agency/alerthq.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/ai-software-agency/alerthq#readme",
+  "bugs": "https://github.com/ai-software-agency/alerthq/issues",
+  "keywords": [
+    "alerts",
+    "monitoring",
+    "observability",
+    "cloud",
+    "devops",
+    "sre",
+    "alerthq"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -12,7 +28,9 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "test": "vitest run",

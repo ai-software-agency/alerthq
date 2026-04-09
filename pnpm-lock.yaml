@@ -50,13 +50,13 @@ importers:
 
   packages/cli:
     dependencies:
+      '@alerthq/core':
+        specifier: workspace:*
+        version: link:../core
       commander:
         specifier: ^13.0.0
         version: 13.1.0
     devDependencies:
-      '@alerthq/core':
-        specifier: workspace:*
-        version: link:../core
       '@alerthq/provider-aws-cloudwatch':
         specifier: workspace:*
         version: link:../provider-aws-cloudwatch

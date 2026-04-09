@@ -1,8 +1,23 @@
 {
   "name": "@alerthq/storage-postgresql",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "PostgreSQL storage backend for alerthq",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ai-software-agency/alerthq.git",
+    "directory": "packages/storage-postgresql"
+  },
+  "homepage": "https://github.com/ai-software-agency/alerthq#readme",
+  "bugs": "https://github.com/ai-software-agency/alerthq/issues",
+  "keywords": [
+    "alerthq",
+    "storage",
+    "postgresql",
+    "postgres",
+    "alerts",
+    "monitoring"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -12,7 +27,9 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "test": "vitest run --passWithNoTests",

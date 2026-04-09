@@ -91,6 +91,9 @@ async function importPluginModule(
   );
 }
 
+/** @internal Exposed for testing — do not use in production code. */
+export const _internal = { importPluginModule };
+
 /**
  * Duck-type check that an object has the required properties (string `name` + methods).
  *
@@ -143,7 +146,7 @@ export async function loadStoragePlugin(config: AlerthqConfig): Promise<StorageP
 
   logger.debug(`Loading storage plugin: ${packageName}`);
 
-  const { factory } = await importPluginModule(packageName);
+  const { factory } = await _internal.importPluginModule(packageName);
 
   if (typeof factory !== 'function') {
     throw new Error(
@@ -187,7 +190,7 @@ export async function loadProviderPlugins(
     const packageName = resolveProviderPackage(name, providerConfig);
     logger.debug(`Loading provider plugin: ${packageName}`);
 
-    const { factory, configSchema } = await importPluginModule(packageName);
+    const { factory, configSchema } = await _internal.importPluginModule(packageName);
 
     if (typeof factory !== 'function') {
       throw new Error(

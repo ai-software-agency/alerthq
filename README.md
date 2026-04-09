@@ -80,7 +80,7 @@ npx alerthq list
 | `versions` | List sync history |
 | `add` | Add a manual alert definition |
 | `remove` | Remove a manual alert definition |
-| `tag` | Set an overlay tag on an alert (key=value) |
+| `tag` | Set or remove an overlay tag on an alert |
 | `export` | Export alerts to CSV or JSON |
 | `stats` | Show summary statistics for alerts |
 

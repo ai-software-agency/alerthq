@@ -1,0 +1,16 @@
+---
+description: Enforce canonical single-source-of-truth for all outward-facing text
+alwaysApply: true
+---
+
+# Canonical Data Guard
+
+Read and follow the "Canonical Data — Single Source of Truth" section in `CONTRIBUTING.md`.
+
+**Before editing any of these files, STOP:**
+
+- `README.md` — edit `packages/core/src/canonical/meta.ts` instead
+- CLI `.description()` or `.option()` strings — edit `packages/core/src/canonical/cli.ts` instead
+- `packages/cli/package.json` `"description"` — must match `META.npmDescription`
+
+Run `pnpm test` before committing — drift tests enforce alignment.

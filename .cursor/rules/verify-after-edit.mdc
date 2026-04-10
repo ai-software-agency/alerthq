@@ -1,0 +1,16 @@
+---
+description: Self-verification checklist after every code edit
+alwaysApply: true
+---
+
+# Post-Edit Verification
+
+After editing any `.ts` file, follow the "Post-Edit Verification" checklist in `CONTRIBUTING.md`.
+
+Quick summary:
+1. Run lints on edited files
+2. Verify `.js` extensions on relative imports
+3. Verify `import type` for type-only imports
+4. No `console.*` — use `logger` from `@alerthq/core`
+5. Error message prefixes in plugins: `[provider-id]`
+6. New files must be kebab-case

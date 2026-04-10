@@ -1,0 +1,11 @@
+---
+description: TypeScript coding standards for the alerthq monorepo
+globs: **/*.ts
+alwaysApply: false
+---
+
+# TypeScript Standards
+
+Read and follow the "TypeScript Standards" section in `CONTRIBUTING.md`.
+
+Key rules: ESM with `.js` extensions, `import type` for type-only imports, kebab-case files, `logger` from `@alerthq/core` (no `console.*`), `withRetry` for all I/O, `"default"` key in package.json exports.

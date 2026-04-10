@@ -20,7 +20,7 @@ export class DatadogAdapter implements ProviderAdapter {
   async initialize(config: Record<string, unknown>): Promise<void> {
     const result = datadogConfigSchema.safeParse(config);
     if (!result.success) {
-      throw new Error(result.error.issues.map((i) => i.message).join('; '));
+      throw new Error(`[datadog] invalid config: ${result.error.issues.map((i) => i.message).join('; ')}`);
     }
     this.apiClient.init(result.data);
   }

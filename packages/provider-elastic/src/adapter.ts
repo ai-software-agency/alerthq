@@ -206,7 +206,7 @@ export class ElasticProviderAdapter implements ProviderAdapter {
       const body = await withRetry(async () => {
         const resp = await fetch(url, { headers });
         if (!resp.ok) {
-          throw new Error(`Kibana API error: ${resp.status} ${resp.statusText}`);
+          throw new Error(`[elastic] Kibana API error: ${resp.status} ${resp.statusText}`);
         }
         return (await resp.json()) as KibanaRulesFindResponse;
       });

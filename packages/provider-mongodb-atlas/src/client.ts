@@ -35,7 +35,7 @@ export class DigestAuthClient {
 
     const wwwAuth = initialResp.headers.get('www-authenticate');
     if (!wwwAuth) {
-      throw new Error('Atlas API returned 401 without WWW-Authenticate header');
+      throw new Error('[mongodb-atlas] Atlas API returned 401 without WWW-Authenticate header');
     }
 
     const challenge = this.parseChallenge(wwwAuth);
@@ -78,7 +78,7 @@ export class DigestAuthClient {
     }
 
     if (!parts.realm || !parts.nonce) {
-      throw new Error(`Invalid Digest challenge: missing realm or nonce in "${header}"`);
+      throw new Error(`[mongodb-atlas] invalid Digest challenge: missing realm or nonce in "${header}"`);
     }
 
     return {

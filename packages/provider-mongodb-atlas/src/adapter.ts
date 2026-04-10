@@ -92,7 +92,7 @@ export class AtlasProviderAdapter implements ProviderAdapter {
         const resp = await this.client.fetch(url);
         if (!resp.ok) {
           throw new Error(
-            `Atlas API error: ${resp.status} ${resp.statusText} for project ${projectId}`,
+            `[mongodb-atlas] Atlas API error: ${resp.status} ${resp.statusText} for project ${projectId}`,
           );
         }
         return (await resp.json()) as AtlasAlertConfigListResponse;

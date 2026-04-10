@@ -22,14 +22,14 @@ export class CloudWatchAdapter implements ProviderAdapter {
 
     if (!Array.isArray(regions) || regions.length === 0) {
       throw new Error(
-        'CloudWatch provider requires a non-empty "regions" array in config.',
+        '[aws-cloudwatch] config.regions is required and must be a non-empty array of strings',
       );
     }
 
     // Ensure every entry is a string
     for (const r of regions) {
       if (typeof r !== 'string') {
-        throw new Error(`Invalid region value: ${String(r)}. Expected a string.`);
+        throw new Error(`[aws-cloudwatch] invalid region value: ${String(r)}. Expected a string`);
       }
     }
 

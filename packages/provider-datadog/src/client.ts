@@ -70,7 +70,8 @@ export class DatadogApiClient {
     try {
       await this.monitorsApi.listMonitors({ pageSize: 1 });
       return true;
-    } catch {
+    } catch (err) {
+      logger.debug(`[datadog] Connection test failed: ${String(err)}`);
       return false;
     }
   }

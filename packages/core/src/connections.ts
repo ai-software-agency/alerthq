@@ -20,37 +20,58 @@ export interface ConnectionTestResult {
  * prevent testing the others. Storage is tested as `'storage:<name>'`.
  *
  * @param ctx - Runtime context from {@link bootstrap}.
+ * @param providerFilter - If set, only test this provider (skip storage and others).
  * @returns Array of test results for storage and all providers.
  */
-export async function testConnections(ctx: Context): Promise<ConnectionTestResult[]> {
+export async function testConnections(
+  ctx: Context,
+  providerFilter?: string,
+): Promise<ConnectionTestResult[]> {
   const { storage, providers } = ctx;
   const results: ConnectionTestResult[] = [];
 
-  // Test storage — StorageProvider doesn't mandate testConnection,
-  // so we probe for it at runtime.
-  const storageName = `storage:${storage.name}`;
-  try {
-    const storageAny = storage as unknown as Record<string, unknown>;
-    if (typeof storageAny['testConnection'] === 'function') {
-      const ok = await (storageAny['testConnection'] as () => Promise<boolean>)();
-      results.push({ name: storageName, ok });
-    } else {
-      results.push({ name: storageName, ok: true });
+  if (!providerFilter) {
+    const storageName = `storage:${storage.name}`;
+    try {
+      const storageAny = storage as unknown as Record<string, unknown>;
+      if (typeof storageAny['testConnection'] === 'function') {
+        const ok = await (storageAny['testConnection'] as () => Promise<boolean>)();
+        results.push({ name: storageName, ok });
+      } else {
+        results.push({ name: storageName, ok: true });
+      }
+    } catch (err) {
+      results.push({ name: storageName, ok: false, error: (err as Error).message });
     }
-  } catch (err) {
-    results.push({ name: storageName, ok: false, error: (err as Error).message });
+    logger.info(`${storageName}: ${results[results.length - 1]!.ok ? 'OK' : 'FAILED'}`);
   }
-  logger.info(`${storageName}: ${results[results.length - 1]!.ok ? 'OK' : 'FAILED'}`);
 
-  // Test each provider
   for (const [name, adapter] of Object.entries(providers)) {
+    if (providerFilter && name !== providerFilter) continue;
+
     try {
       const ok = await adapter.testConnection();
-      results.push({ name, ok });
+      if (ok) {
+        results.push({ name, ok: true });
+      } else {
+        results.push({
+          name,
+          ok: false,
+          error: 'Connection failed — run with --verbose for debug logs',
+        });
+      }
     } catch (err) {
       results.push({ name, ok: false, error: (err as Error).message });
     }
     logger.info(`${name}: ${results[results.length - 1]!.ok ? 'OK' : 'FAILED'}`);
+  }
+
+  if (providerFilter && results.length === 0) {
+    results.push({
+      name: providerFilter,
+      ok: false,
+      error: `Provider '${providerFilter}' is not enabled or does not exist in config`,
+    });
   }
 
   return results;

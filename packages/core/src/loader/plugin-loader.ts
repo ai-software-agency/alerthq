@@ -42,6 +42,10 @@ function resolveProviderPackage(providerName: string, config: ProviderConfig): s
   return `@alerthq/provider-${providerName}`;
 }
 
+export type PluginImportFn = (
+  packageName: string,
+) => Promise<{ factory: unknown; configSchema?: ZodType }>;
+
 /**
  * Dynamically import a module and return the full module (for schema access)
  * along with its default export.
@@ -91,8 +95,6 @@ async function importPluginModule(
   );
 }
 
-/** @internal Exposed for testing — do not use in production code. */
-export const _internal = { importPluginModule };
 
 /**
  * Duck-type check that an object has the required properties (string `name` + methods).
@@ -140,13 +142,16 @@ function validatePlugin(
  * @returns Initialized storage provider.
  * @throws If the plugin cannot be found, is invalid, or fails to initialize.
  */
-export async function loadStoragePlugin(config: AlerthqConfig): Promise<StorageProvider> {
+export async function loadStoragePlugin(
+  config: AlerthqConfig,
+  importFn: PluginImportFn = importPluginModule,
+): Promise<StorageProvider> {
   const providerName = config.storage.provider;
   const packageName = resolveStoragePackage(providerName);
 
   logger.debug(`Loading storage plugin: ${packageName}`);
 
-  const { factory } = await _internal.importPluginModule(packageName);
+  const { factory } = await importFn(packageName);
 
   if (typeof factory !== 'function') {
     throw new Error(
@@ -178,6 +183,7 @@ export async function loadStoragePlugin(config: AlerthqConfig): Promise<StorageP
  */
 export async function loadProviderPlugins(
   config: AlerthqConfig,
+  importFn: PluginImportFn = importPluginModule,
 ): Promise<Record<string, ProviderAdapter>> {
   const providers: Record<string, ProviderAdapter> = {};
 
@@ -190,7 +196,7 @@ export async function loadProviderPlugins(
     const packageName = resolveProviderPackage(name, providerConfig);
     logger.debug(`Loading provider plugin: ${packageName}`);
 
-    const { factory, configSchema } = await _internal.importPluginModule(packageName);
+    const { factory, configSchema } = await importFn(packageName);
 
     if (typeof factory !== 'function') {
       throw new Error(

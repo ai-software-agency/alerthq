@@ -1,21 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  loadStoragePlugin,
-  loadProviderPlugins,
-  _internal,
-} from '../src/loader/plugin-loader.js';
+import { describe, it, expect, vi } from 'vitest';
+import type { PluginImportFn } from '../src/loader/plugin-loader.js';
+import { loadStoragePlugin, loadProviderPlugins } from '../src/loader/plugin-loader.js';
 
 describe('plugin loader validation', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it('rejects a storage plugin missing required methods', async () => {
-    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+    const fakeImport: PluginImportFn = async () => ({
       factory: () => ({
         name: 'bad',
         initialize: vi.fn(),
-        // missing all other required methods
       }),
     });
 
@@ -24,11 +16,13 @@ describe('plugin loader validation', () => {
       providers: {},
     };
 
-    await expect(loadStoragePlugin(config)).rejects.toThrow(/missing required methods/);
+    await expect(loadStoragePlugin(config, fakeImport)).rejects.toThrow(
+      /missing required methods/,
+    );
   });
 
   it('rejects a plugin that does not export a factory function', async () => {
-    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+    const fakeImport: PluginImportFn = async () => ({
       factory: 'not a function',
     });
 
@@ -37,13 +31,13 @@ describe('plugin loader validation', () => {
       providers: {},
     };
 
-    await expect(loadStoragePlugin(config)).rejects.toThrow(
+    await expect(loadStoragePlugin(config, fakeImport)).rejects.toThrow(
       /does not export a factory function/,
     );
   });
 
   it('rejects a plugin whose factory returns a non-object', async () => {
-    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+    const fakeImport: PluginImportFn = async () => ({
       factory: () => null,
     });
 
@@ -52,11 +46,13 @@ describe('plugin loader validation', () => {
       providers: {},
     };
 
-    await expect(loadStoragePlugin(config)).rejects.toThrow(/did not return an object/);
+    await expect(loadStoragePlugin(config, fakeImport)).rejects.toThrow(
+      /did not return an object/,
+    );
   });
 
   it('rejects a plugin with empty name', async () => {
-    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+    const fakeImport: PluginImportFn = async () => ({
       factory: () => ({
         name: '',
         initialize: vi.fn(),
@@ -68,7 +64,9 @@ describe('plugin loader validation', () => {
       providers: {},
     };
 
-    await expect(loadStoragePlugin(config)).rejects.toThrow(/missing a 'name' property/);
+    await expect(loadStoragePlugin(config, fakeImport)).rejects.toThrow(
+      /missing a 'name' property/,
+    );
   });
 
   it('throws an actionable message when plugin is not installed', async () => {
@@ -103,7 +101,7 @@ describe('plugin loader validation', () => {
       getOverlayTags: vi.fn(),
     };
 
-    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+    const fakeImport: PluginImportFn = async () => ({
       factory: () => mockStorage,
     });
 
@@ -112,7 +110,7 @@ describe('plugin loader validation', () => {
       providers: {},
     };
 
-    const result = await loadStoragePlugin(config);
+    const result = await loadStoragePlugin(config, fakeImport);
     expect(result.name).toBe('test-storage');
     expect(mockStorage.initialize).toHaveBeenCalledWith({ path: './test.db' });
   });
@@ -137,7 +135,7 @@ describe('plugin loader validation', () => {
       testConnection: vi.fn().mockResolvedValue(true),
     };
 
-    vi.spyOn(_internal, 'importPluginModule').mockResolvedValue({
+    const fakeImport: PluginImportFn = async () => ({
       factory: () => mockAdapter,
     });
 
@@ -152,7 +150,7 @@ describe('plugin loader validation', () => {
       },
     };
 
-    const result = await loadProviderPlugins(config);
+    const result = await loadProviderPlugins(config, fakeImport);
     expect(result['custom']!.name).toBe('custom-provider');
     expect(mockAdapter.initialize).toHaveBeenCalledWith({ apiKey: 'test-key' });
   });

@@ -28,9 +28,17 @@ export const CLI_COMMANDS: readonly CliCommand[] = [
   },
   {
     name: 'test',
-    usage: 'test',
+    usage: 'test [options]',
     description: 'Test connections to storage and all providers',
-    examples: ['alerthq test'],
+    options: [
+      { flags: '--provider <name>', description: 'Test only a specific provider' },
+      { flags: '--verbose', description: 'Show debug-level logs during connection tests' },
+    ],
+    examples: [
+      'alerthq test',
+      'alerthq test --provider elastic',
+      'alerthq test --verbose',
+    ],
   },
   {
     name: 'sync',

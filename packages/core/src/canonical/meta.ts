@@ -43,8 +43,8 @@ export const META = {
       package: '@alerthq/provider-elastic',
       description: 'Elastic Watcher + Kibana Rules provider',
       configFields: [
-        { name: 'url', type: 'string', required: true, description: 'Elasticsearch cluster URL' },
-        { name: 'kibanaUrl', type: 'string', required: false, description: 'Kibana URL (for Kibana alerting rules)' },
+        { name: 'url', type: 'string', required: false, description: 'Elasticsearch URL (for Watcher alerts — optional if kibanaUrl is set)' },
+        { name: 'kibanaUrl', type: 'string', required: false, description: 'Kibana URL (for Kibana alerting rules — optional if url is set)' },
         { name: 'auth.type', type: '"basic" | "apiKey"', required: true, description: 'Authentication method' },
         { name: 'auth.username', type: 'string', required: false, description: 'Username (when auth.type is "basic")' },
         { name: 'auth.password', type: 'string', required: false, description: 'Password (when auth.type is "basic")' },

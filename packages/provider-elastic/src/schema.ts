@@ -12,11 +12,13 @@ const apiKeyAuth = z.object({
 });
 
 export const elasticConfigSchema = z.object({
-  url: z.string({ required_error: '[elastic] config.url is required' }),
+  url: z.string().optional(),
   kibanaUrl: z.string().optional(),
   auth: z.discriminatedUnion('type', [basicAuth, apiKeyAuth], {
     errorMap: () => ({ message: '[elastic] config.auth.type must be "basic" or "apiKey"' }),
   }),
   watcherPageSize: z.number().optional(),
   kibanaPageSize: z.number().optional(),
+}).refine((cfg) => cfg.url || cfg.kibanaUrl, {
+  message: '[elastic] at least one of config.url or config.kibanaUrl is required',
 });

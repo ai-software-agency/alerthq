@@ -56,8 +56,12 @@ export class GrafanaApiClient {
     try {
       const url = `${this.baseUrl}/api/health`;
       const resp = await fetch(url, { headers: this.headers });
+      if (!resp.ok) {
+        logger.debug(`[grafana] Health check failed: ${resp.status} ${resp.statusText}`);
+      }
       return resp.ok;
-    } catch {
+    } catch (err) {
+      logger.debug(`[grafana] Connection test failed: ${String(err)}`);
       return false;
     }
   }

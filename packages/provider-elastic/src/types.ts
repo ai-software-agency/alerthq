@@ -70,9 +70,9 @@ export interface KibanaRuleAction {
   params: Record<string, unknown>;
 }
 
-/** Provider config shape. */
+/** Provider config shape. At least one of `url` or `kibanaUrl` must be provided. */
 export interface ElasticProviderConfig {
-  url: string;
+  url?: string;
   kibanaUrl?: string;
   auth: ElasticAuth;
   watcherPageSize?: number;

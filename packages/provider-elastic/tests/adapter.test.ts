@@ -2,11 +2,42 @@ import { describe, it, expect } from 'vitest';
 import { ElasticProviderAdapter } from '../src/adapter.js';
 
 describe('ElasticProviderAdapter.initialize', () => {
-  it('throws when url is missing', async () => {
+  it('throws when neither url nor kibanaUrl is provided', async () => {
     const adapter = new ElasticProviderAdapter();
     await expect(
       adapter.initialize({ auth: { type: 'basic', username: 'u', password: 'p' } }),
-    ).rejects.toThrow('[elastic] config.url is required');
+    ).rejects.toThrow('at least one of config.url or config.kibanaUrl is required');
+  });
+
+  it('accepts config with only url', async () => {
+    const adapter = new ElasticProviderAdapter();
+    await expect(
+      adapter.initialize({
+        url: 'http://localhost:9200',
+        auth: { type: 'apiKey', apiKey: 'test-key' },
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('accepts config with only kibanaUrl', async () => {
+    const adapter = new ElasticProviderAdapter();
+    await expect(
+      adapter.initialize({
+        kibanaUrl: 'http://localhost:5601',
+        auth: { type: 'apiKey', apiKey: 'test-key' },
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('accepts config with both url and kibanaUrl', async () => {
+    const adapter = new ElasticProviderAdapter();
+    await expect(
+      adapter.initialize({
+        url: 'http://localhost:9200',
+        kibanaUrl: 'http://localhost:5601',
+        auth: { type: 'apiKey', apiKey: 'test-key' },
+      }),
+    ).resolves.toBeUndefined();
   });
 
   it('throws when auth is missing', async () => {

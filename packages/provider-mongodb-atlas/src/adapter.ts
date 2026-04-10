@@ -34,12 +34,19 @@ export class AtlasProviderAdapter implements ProviderAdapter {
     try {
       const baseUrl = this.config.baseUrl ?? DEFAULT_BASE_URL;
       const projectId = this.config.projectIds[0];
-      if (!projectId) return false;
+      if (!projectId) {
+        logger.debug('[mongodb-atlas] No project IDs configured');
+        return false;
+      }
 
       const url = `${baseUrl}/api/atlas/v2/groups/${projectId}/alertConfigs?pageNum=1&itemsPerPage=1`;
       const resp = await this.client.fetch(url);
+      if (!resp.ok) {
+        logger.debug(`[mongodb-atlas] API returned ${resp.status} ${resp.statusText}`);
+      }
       return resp.ok;
-    } catch {
+    } catch (err) {
+      logger.debug(`[mongodb-atlas] Connection test failed: ${String(err)}`);
       return false;
     }
   }

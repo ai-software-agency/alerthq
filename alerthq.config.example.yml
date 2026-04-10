@@ -1,5 +1,6 @@
 # alerthq configuration
 # Copy this file to alerthq.config.yml and customize for your environment.
+# Environment variables are supported via ${VAR} syntax.
 #
 # See: https://github.com/ai-software-agency/alerthq
 
@@ -11,35 +12,78 @@ storage:
   # Or use PostgreSQL:
   # provider: postgresql
   # postgresql:
-  #   url: ${DATABASE_URL}
+  #   connectionString: ${DATABASE_URL}
 
 providers:
   # AWS CloudWatch
   # Requires: AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY in .env
-  # Install:  pnpm add @alerthq/provider-aws-cloudwatch
   aws-cloudwatch:
     enabled: true
     regions:
-      - us-east-1
+      - ${AWS_REGION}
+    # credentials:            # optional — falls back to AWS SDK credential chain
+    #   accessKeyId: ${AWS_ACCESS_KEY_ID}
+    #   secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
 
   # Elastic Watcher + Kibana Rules
-  # Install: pnpm add @alerthq/provider-elastic
-  # elastic:
-  #   enabled: true
-  #   url: https://localhost:9200
-  #   username: elastic
-  #   password: ${ELASTIC_PASSWORD}
+  # At least one of url or kibanaUrl is required, plus auth credentials in .env
+  elastic:
+    enabled: true
+    # url: ${ELASTIC_URL}                   # optional — needed for Watcher alerts
+    kibanaUrl: ${ELASTIC_KIBANA_URL}        # optional — needed for Kibana alerting rules
+
+    # Option 1: API key auth
+    auth:
+      type: apiKey
+      apiKey: ${ELASTIC_API_KEY}
+
+    # Option 2: Basic auth (uncomment below, comment out apiKey block above)
+    # auth:
+    #   type: basic
+    #   username: ${ELASTIC_USERNAME}
+    #   password: ${ELASTIC_PASSWORD}
 
   # MongoDB Atlas
-  # Install: pnpm add @alerthq/provider-mongodb-atlas
+  # Requires: ATLAS_PUBLIC_KEY, ATLAS_PRIVATE_KEY, ATLAS_PROJECT_ID in .env
   # mongodb-atlas:
   #   enabled: true
   #   publicKey: ${ATLAS_PUBLIC_KEY}
   #   privateKey: ${ATLAS_PRIVATE_KEY}
-  #   projectId: ${ATLAS_PROJECT_ID}
+  #   projectIds:
+  #     - ${ATLAS_PROJECT_ID}
 
   # Azure Monitor
-  # Install: pnpm add @alerthq/provider-azure-monitor
+  # Requires: AZURE_SUBSCRIPTION_ID in .env (uses DefaultAzureCredential for auth)
   # azure-monitor:
   #   enabled: true
-  #   subscriptionId: ${AZURE_SUBSCRIPTION_ID}
+  #   subscriptionIds:
+  #     - ${AZURE_SUBSCRIPTION_ID}
+
+  # Datadog
+  # Requires: DD_API_KEY, DD_APP_KEY in .env
+  # datadog:
+  #   enabled: true
+  #   apiKey: ${DD_API_KEY}
+  #   appKey: ${DD_APP_KEY}
+  #   site: datadoghq.com         # optional, defaults to datadoghq.com
+
+  # GCP Cloud Monitoring
+  # Requires: GCP_PROJECT_ID in .env
+  # gcp-monitoring:
+  #   enabled: true
+  #   projectId: ${GCP_PROJECT_ID}
+  #   keyFilename: ./gcp-sa-key.json   # optional
+
+  # Grafana
+  # Requires: GRAFANA_URL in .env + auth credentials
+  # grafana:
+  #   enabled: true
+  #   url: ${GRAFANA_URL}
+  #
+  #   # Option 1: API key / service account token
+  #   apiKey: ${GRAFANA_API_KEY}
+  #
+  #   # Option 2: Basic auth (uncomment below, comment out apiKey above)
+  #   # basicAuth:
+  #   #   username: ${GRAFANA_USERNAME}
+  #   #   password: ${GRAFANA_PASSWORD}

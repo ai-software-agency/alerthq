@@ -42,9 +42,9 @@ describe('ElasticProviderAdapter.initialize', () => {
 
   it('throws when auth is missing', async () => {
     const adapter = new ElasticProviderAdapter();
-    await expect(
-      adapter.initialize({ url: 'http://localhost:9200' }),
-    ).rejects.toThrow('[elastic] config.auth is required');
+    await expect(adapter.initialize({ url: 'http://localhost:9200' })).rejects.toThrow(
+      '[elastic] config.auth is required',
+    );
   });
 
   it('throws when auth type is invalid', async () => {

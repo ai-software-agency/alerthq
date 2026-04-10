@@ -16,9 +16,7 @@ describe('plugin loader validation', () => {
       providers: {},
     };
 
-    await expect(loadStoragePlugin(config, fakeImport)).rejects.toThrow(
-      /missing required methods/,
-    );
+    await expect(loadStoragePlugin(config, fakeImport)).rejects.toThrow(/missing required methods/);
   });
 
   it('rejects a plugin that does not export a factory function', async () => {
@@ -46,9 +44,7 @@ describe('plugin loader validation', () => {
       providers: {},
     };
 
-    await expect(loadStoragePlugin(config, fakeImport)).rejects.toThrow(
-      /did not return an object/,
-    );
+    await expect(loadStoragePlugin(config, fakeImport)).rejects.toThrow(/did not return an object/);
   });
 
   it('rejects a plugin with empty name', async () => {

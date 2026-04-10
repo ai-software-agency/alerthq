@@ -13,40 +13,40 @@ import { getCommandDef } from '../utils/canonical.js';
  */
 const PROVIDER_FIELD_ENV: Record<string, Record<string, string>> = {
   'aws-cloudwatch': {
-    'regions': 'AWS_REGION',
+    regions: 'AWS_REGION',
     'credentials.accessKeyId': 'AWS_ACCESS_KEY_ID',
     'credentials.secretAccessKey': 'AWS_SECRET_ACCESS_KEY',
     'credentials.sessionToken': 'AWS_SESSION_TOKEN',
   },
-  'elastic': {
-    'url': 'ELASTIC_URL',
-    'kibanaUrl': 'ELASTIC_KIBANA_URL',
+  elastic: {
+    url: 'ELASTIC_URL',
+    kibanaUrl: 'ELASTIC_KIBANA_URL',
     'auth.username': 'ELASTIC_USERNAME',
     'auth.password': 'ELASTIC_PASSWORD',
     'auth.apiKey': 'ELASTIC_API_KEY',
   },
   'mongodb-atlas': {
-    'publicKey': 'ATLAS_PUBLIC_KEY',
-    'privateKey': 'ATLAS_PRIVATE_KEY',
-    'projectIds': 'ATLAS_PROJECT_ID',
+    publicKey: 'ATLAS_PUBLIC_KEY',
+    privateKey: 'ATLAS_PRIVATE_KEY',
+    projectIds: 'ATLAS_PROJECT_ID',
   },
   'azure-monitor': {
-    'subscriptionIds': 'AZURE_SUBSCRIPTION_ID',
+    subscriptionIds: 'AZURE_SUBSCRIPTION_ID',
   },
-  'datadog': {
-    'apiKey': 'DD_API_KEY',
-    'appKey': 'DD_APP_KEY',
-    'site': 'DD_SITE',
+  datadog: {
+    apiKey: 'DD_API_KEY',
+    appKey: 'DD_APP_KEY',
+    site: 'DD_SITE',
   },
   'gcp-monitoring': {
-    'projectId': 'GCP_PROJECT_ID',
-    'keyFilename': 'GCP_KEY_FILENAME',
+    projectId: 'GCP_PROJECT_ID',
+    keyFilename: 'GCP_KEY_FILENAME',
     'credentials.client_email': 'GCP_CLIENT_EMAIL',
     'credentials.private_key': 'GCP_PRIVATE_KEY',
   },
-  'grafana': {
-    'url': 'GRAFANA_URL',
-    'apiKey': 'GRAFANA_API_KEY',
+  grafana: {
+    url: 'GRAFANA_URL',
+    apiKey: 'GRAFANA_API_KEY',
     'basicAuth.username': 'GRAFANA_USERNAME',
     'basicAuth.password': 'GRAFANA_PASSWORD',
   },
@@ -113,7 +113,8 @@ async function promptAuthType(
 function isFieldRelevant(providerName: string, fieldName: string, authChoice: AuthChoice): boolean {
   if (providerName === 'elastic') {
     if (fieldName === 'auth.type') return false;
-    if (authChoice === 'apiKey') return !fieldName.startsWith('auth.username') && !fieldName.startsWith('auth.password');
+    if (authChoice === 'apiKey')
+      return !fieldName.startsWith('auth.username') && !fieldName.startsWith('auth.password');
     if (authChoice === 'basic') return fieldName !== 'auth.apiKey';
   }
   if (providerName === 'grafana') {

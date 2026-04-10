@@ -4,16 +4,16 @@ import { AtlasProviderAdapter } from '../src/adapter.js';
 describe('AtlasProviderAdapter.initialize', () => {
   it('throws when publicKey is missing', async () => {
     const adapter = new AtlasProviderAdapter();
-    await expect(
-      adapter.initialize({ privateKey: 'pk', projectIds: ['p1'] }),
-    ).rejects.toThrow('[mongodb-atlas] config.publicKey is required');
+    await expect(adapter.initialize({ privateKey: 'pk', projectIds: ['p1'] })).rejects.toThrow(
+      '[mongodb-atlas] config.publicKey is required',
+    );
   });
 
   it('throws when privateKey is missing', async () => {
     const adapter = new AtlasProviderAdapter();
-    await expect(
-      adapter.initialize({ publicKey: 'pub', projectIds: ['p1'] }),
-    ).rejects.toThrow('[mongodb-atlas] config.privateKey is required');
+    await expect(adapter.initialize({ publicKey: 'pub', projectIds: ['p1'] })).rejects.toThrow(
+      '[mongodb-atlas] config.privateKey is required',
+    );
   });
 
   it('throws when projectIds is empty', async () => {

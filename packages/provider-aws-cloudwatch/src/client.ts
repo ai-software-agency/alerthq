@@ -115,11 +115,11 @@ export class CloudWatchApiClient {
 
     for (const [region, client] of this.clients) {
       try {
-        await client.send(
-          new DescribeAlarmsCommand({ MaxRecords: 1 }),
-        );
+        await client.send(new DescribeAlarmsCommand({ MaxRecords: 1 }));
       } catch (err) {
-        logger.debug(`[aws-cloudwatch] Connection test failed for region ${region}: ${String(err)}`);
+        logger.debug(
+          `[aws-cloudwatch] Connection test failed for region ${region}: ${String(err)}`,
+        );
         return false;
       }
     }

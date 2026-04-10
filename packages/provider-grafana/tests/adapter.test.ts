@@ -14,9 +14,9 @@ describe('GrafanaAdapter.initialize', () => {
 
   it('throws on invalid url', async () => {
     const adapter = new GrafanaAdapter();
-    await expect(
-      adapter.initialize({ url: 'not-a-url', apiKey: 'tok123' }),
-    ).rejects.toThrow('[grafana] url must be a valid URL');
+    await expect(adapter.initialize({ url: 'not-a-url', apiKey: 'tok123' })).rejects.toThrow(
+      '[grafana] url must be a valid URL',
+    );
   });
 
   it('accepts valid config with url + apiKey', async () => {

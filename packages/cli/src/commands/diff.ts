@@ -28,9 +28,7 @@ export function registerDiff(program: Command): void {
       } else if (runs.length >= 2) {
         fromVersion = runs[1]!.version;
       } else {
-        throw new Error(
-          'Only one version exists. Provide --from explicitly or run another sync.',
-        );
+        throw new Error('Only one version exists. Provide --from explicitly or run another sync.');
       }
 
       const changes = await getChanges(ctx, fromVersion, toVersion);
@@ -43,17 +41,37 @@ export function registerDiff(program: Command): void {
       const rows: Record<string, string>[] = [];
 
       for (const a of changes.added) {
-        rows.push({ change: 'added', id: a.id, name: a.name, source: a.source, severity: a.severity });
+        rows.push({
+          change: 'added',
+          id: a.id,
+          name: a.name,
+          source: a.source,
+          severity: a.severity,
+        });
       }
       for (const r of changes.removed) {
-        rows.push({ change: 'removed', id: r.id, name: r.name, source: r.source, severity: r.severity });
+        rows.push({
+          change: 'removed',
+          id: r.id,
+          name: r.name,
+          source: r.source,
+          severity: r.severity,
+        });
       }
       for (const m of changes.modified) {
-        rows.push({ change: 'modified', id: m.after.id, name: m.after.name, source: m.after.source, severity: m.after.severity });
+        rows.push({
+          change: 'modified',
+          id: m.after.id,
+          name: m.after.name,
+          source: m.after.source,
+          severity: m.after.severity,
+        });
       }
 
       console.log(`Diff: version ${fromVersion} -> ${toVersion}`);
-      console.log(`  Added: ${changes.added.length}  Removed: ${changes.removed.length}  Modified: ${changes.modified.length}\n`);
+      console.log(
+        `  Added: ${changes.added.length}  Removed: ${changes.removed.length}  Modified: ${changes.modified.length}\n`,
+      );
 
       if (rows.length === 0) {
         console.log('No changes');

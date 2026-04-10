@@ -46,39 +46,39 @@ try {
 
 ## Exported Functions
 
-| Function | Signature | Description |
-|----------|-----------|-------------|
-| `bootstrap` | `(configPath: string) => Promise<Context>` | Load config, resolve and initialize plugins |
-| `sync` | `(ctx: Context, opts?: SyncOptions) => Promise<SyncRun>` | Sync alert definitions from providers |
-| `getAlerts` | `(ctx: Context, opts?) => Promise<AlertDefinition[]>` | Get alert definitions for a version |
-| `addManualAlert` | `(ctx: Context, input: ManualAlertInput) => Promise<AlertDefinition>` | Add a manual alert definition |
-| `removeManualAlert` | `(ctx: Context, alertId: string) => Promise<boolean>` | Remove a manual alert definition |
-| `getChanges` | `(ctx: Context, opts?) => Promise<ChangesResult>` | Compare two versions (drift detection) |
-| `setTag` | `(ctx: Context, alertId: string, key: string, value: string) => Promise<void>` | Set an overlay tag on an alert |
-| `removeTag` | `(ctx: Context, alertId: string, key: string) => Promise<boolean>` | Remove an overlay tag |
-| `testConnections` | `(ctx: Context) => Promise<ConnectionTestResult[]>` | Test storage and provider connections |
-| `withRetry` | `<T>(fn: () => Promise<T>, opts?: RetryOptions) => Promise<T>` | Retry with exponential backoff |
-| `generateAlertId` | `(source: string, sourceId: string) => string` | Generate deterministic alert ID |
-| `hashConfig` | `(config: Record<string, unknown>) => string` | SHA-256 hash of raw config |
-| `formatTable` | `(alerts: AlertDefinition[]) => string` | Format alerts as a table |
-| `formatCsv` | `(alerts: AlertDefinition[]) => string` | Format alerts as CSV |
-| `formatJson` | `(alerts: AlertDefinition[]) => string` | Format alerts as JSON |
-| `logger` | `Logger` | Structured logger instance |
-| `setLogger` | `(l: Logger) => void` | Replace the default logger |
-| `loadConfig` | `(path: string) => Promise<AlerthqConfig>` | Load and validate config from YAML |
-| `resolveEnvVars` | `(input: string) => string` | Resolve `${VAR}` references in strings |
-| `loadStoragePlugin` | `(name: string) => Promise<StorageFactory>` | Dynamically load a storage plugin |
-| `loadProviderPlugins` | `(config: AlerthqConfig) => Promise<Record<string, ProviderAdapter>>` | Load and initialize all providers |
-| `alerthqConfigSchema` | `ZodType` | Zod schema for config validation |
+| Function              | Signature                                                                      | Description                                 |
+| --------------------- | ------------------------------------------------------------------------------ | ------------------------------------------- |
+| `bootstrap`           | `(configPath: string) => Promise<Context>`                                     | Load config, resolve and initialize plugins |
+| `sync`                | `(ctx: Context, opts?: SyncOptions) => Promise<SyncRun>`                       | Sync alert definitions from providers       |
+| `getAlerts`           | `(ctx: Context, opts?) => Promise<AlertDefinition[]>`                          | Get alert definitions for a version         |
+| `addManualAlert`      | `(ctx: Context, input: ManualAlertInput) => Promise<AlertDefinition>`          | Add a manual alert definition               |
+| `removeManualAlert`   | `(ctx: Context, alertId: string) => Promise<boolean>`                          | Remove a manual alert definition            |
+| `getChanges`          | `(ctx: Context, opts?) => Promise<ChangesResult>`                              | Compare two versions (drift detection)      |
+| `setTag`              | `(ctx: Context, alertId: string, key: string, value: string) => Promise<void>` | Set an overlay tag on an alert              |
+| `removeTag`           | `(ctx: Context, alertId: string, key: string) => Promise<boolean>`             | Remove an overlay tag                       |
+| `testConnections`     | `(ctx: Context) => Promise<ConnectionTestResult[]>`                            | Test storage and provider connections       |
+| `withRetry`           | `<T>(fn: () => Promise<T>, opts?: RetryOptions) => Promise<T>`                 | Retry with exponential backoff              |
+| `generateAlertId`     | `(source: string, sourceId: string) => string`                                 | Generate deterministic alert ID             |
+| `hashConfig`          | `(config: Record<string, unknown>) => string`                                  | SHA-256 hash of raw config                  |
+| `formatTable`         | `(alerts: AlertDefinition[]) => string`                                        | Format alerts as a table                    |
+| `formatCsv`           | `(alerts: AlertDefinition[]) => string`                                        | Format alerts as CSV                        |
+| `formatJson`          | `(alerts: AlertDefinition[]) => string`                                        | Format alerts as JSON                       |
+| `logger`              | `Logger`                                                                       | Structured logger instance                  |
+| `setLogger`           | `(l: Logger) => void`                                                          | Replace the default logger                  |
+| `loadConfig`          | `(path: string) => Promise<AlerthqConfig>`                                     | Load and validate config from YAML          |
+| `resolveEnvVars`      | `(input: string) => string`                                                    | Resolve `${VAR}` references in strings      |
+| `loadStoragePlugin`   | `(name: string) => Promise<StorageFactory>`                                    | Dynamically load a storage plugin           |
+| `loadProviderPlugins` | `(config: AlerthqConfig) => Promise<Record<string, ProviderAdapter>>`          | Load and initialize all providers           |
+| `alerthqConfigSchema` | `ZodType`                                                                      | Zod schema for config validation            |
 
 ### Canonical data exports
 
-| Export | Description |
-|--------|-------------|
-| `META` | Project metadata (providers, packages, severities, etc.) |
-| `CLI_COMMANDS` | All CLI command definitions |
-| `generateHelpText()` | Generate human-readable help text |
-| `generateLlmHelp()` | Generate machine-readable JSON for AI agents |
+| Export               | Description                                              |
+| -------------------- | -------------------------------------------------------- |
+| `META`               | Project metadata (providers, packages, severities, etc.) |
+| `CLI_COMMANDS`       | All CLI command definitions                              |
+| `generateHelpText()` | Generate human-readable help text                        |
+| `generateLlmHelp()`  | Generate machine-readable JSON for AI agents             |
 
 ## Types
 
@@ -88,22 +88,22 @@ The normalized representation of an alert from any provider:
 
 ```ts
 interface AlertDefinition {
-  id: string;                           // sha256(source:sourceId), first 12 chars
-  version: number;                      // sync version (0 = manual)
-  source: string;                       // provider key or "manual"
-  sourceId: string;                     // provider's native ID
-  name: string;                         // alert name
-  description: string;                  // alert description
-  enabled: boolean;                     // enabled in source system
-  severity: Severity;                   // "critical" | "warning" | "info" | "unknown"
-  conditionSummary: string;             // human-readable condition
-  notificationTargets: string[];        // SNS ARNs, emails, etc.
-  tags: Record<string, string>;         // provider tags + overlay tags
-  owner: string;                        // team or user
-  rawConfig: Record<string, unknown>;   // raw provider config
-  configHash: string;                   // sha256(rawConfig) for drift detection
-  lastModifiedAt: string | null;        // last provider modification
-  discoveredAt: string;                 // ISO 8601 first discovery time
+  id: string; // sha256(source:sourceId), first 12 chars
+  version: number; // sync version (0 = manual)
+  source: string; // provider key or "manual"
+  sourceId: string; // provider's native ID
+  name: string; // alert name
+  description: string; // alert description
+  enabled: boolean; // enabled in source system
+  severity: Severity; // "critical" | "warning" | "info" | "unknown"
+  conditionSummary: string; // human-readable condition
+  notificationTargets: string[]; // SNS ARNs, emails, etc.
+  tags: Record<string, string>; // provider tags + overlay tags
+  owner: string; // team or user
+  rawConfig: Record<string, unknown>; // raw provider config
+  configHash: string; // sha256(rawConfig) for drift detection
+  lastModifiedAt: string | null; // last provider modification
+  discoveredAt: string; // ISO 8601 first discovery time
 }
 ```
 
@@ -113,10 +113,10 @@ A record of a sync operation:
 
 ```ts
 interface SyncRun {
-  version: number;                      // auto-incrementing (0 = reserved)
-  name: string;                         // user-provided or auto-generated
-  description: string;                  // optional context
-  createdAt: string;                    // ISO 8601
+  version: number; // auto-incrementing (0 = reserved)
+  name: string; // user-provided or auto-generated
+  description: string; // optional context
+  createdAt: string; // ISO 8601
   providerStatus: Record<string, 'success' | 'error' | 'skipped'>;
 }
 ```
@@ -185,12 +185,18 @@ interface StorageProvider {
 
   // Alert definitions
   saveAlertDefinitions(version: number, alerts: AlertDefinition[]): Promise<void>;
-  getAlertDefinitions(version: number, opts?: { limit?: number; offset?: number }): Promise<AlertDefinition[]>;
+  getAlertDefinitions(
+    version: number,
+    opts?: { limit?: number; offset?: number },
+  ): Promise<AlertDefinition[]>;
   removeAlertDefinition(version: number, alertId: string): Promise<boolean>;
   findAlertsByIdPrefix(version: number, prefix: string): Promise<AlertDefinition[]>;
 
   // Drift detection
-  getChanges(fromVersion: number, toVersion: number): Promise<{
+  getChanges(
+    fromVersion: number,
+    toVersion: number,
+  ): Promise<{
     added: AlertDefinition[];
     removed: AlertDefinition[];
     modified: Array<{ before: AlertDefinition; after: AlertDefinition }>;
@@ -248,8 +254,12 @@ class MyProvider implements ProviderAdapter {
   }
 
   async testConnection(): Promise<boolean> {
-    try { await fetchFromApi(this.config.apiUrl + '/health'); return true; }
-    catch { return false; }
+    try {
+      await fetchFromApi(this.config.apiUrl + '/health');
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 
@@ -262,7 +272,7 @@ Register the provider in `alerthq.config.yml`:
 providers:
   my-provider:
     enabled: true
-    package: './path/to/my-provider'  # or npm package name
+    package: './path/to/my-provider' # or npm package name
     apiUrl: https://api.example.com
     token: ${MY_PROVIDER_TOKEN}
 ```

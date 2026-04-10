@@ -26,7 +26,9 @@ export class AtlasProviderAdapter implements ProviderAdapter {
       alerts.push(...projectAlerts);
     }
 
-    logger.info(`[mongodb-atlas] Fetched ${alerts.length} alerts total across ${this.config.projectIds.length} projects`);
+    logger.info(
+      `[mongodb-atlas] Fetched ${alerts.length} alerts total across ${this.config.projectIds.length} projects`,
+    );
     return alerts;
   }
 
@@ -61,7 +63,9 @@ export class AtlasProviderAdapter implements ProviderAdapter {
       throw new Error('[mongodb-atlas] config.privateKey is required and must be a string');
     }
     if (!config.projectIds || !Array.isArray(config.projectIds) || config.projectIds.length === 0) {
-      throw new Error('[mongodb-atlas] config.projectIds is required and must be a non-empty array of strings');
+      throw new Error(
+        '[mongodb-atlas] config.projectIds is required and must be a non-empty array of strings',
+      );
     }
 
     for (const id of config.projectIds) {

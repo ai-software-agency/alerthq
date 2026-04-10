@@ -90,11 +90,8 @@ async function importPluginModule(
     }
   }
 
-  throw new Error(
-    `Plugin '${packageName}' not found.\nInstall it with: pnpm add ${packageName}`,
-  );
+  throw new Error(`Plugin '${packageName}' not found.\nInstall it with: pnpm add ${packageName}`);
 }
-
 
 /**
  * Duck-type check that an object has the required properties (string `name` + methods).

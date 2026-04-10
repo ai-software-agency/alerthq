@@ -4,8 +4,8 @@ MongoDB Atlas alert provider for [alerthq](https://github.com/edrv/alerthq).
 
 ## Supported Alert Types
 
-| Alert Type | API Source | Notes |
-|------------|-----------|-------|
+| Alert Type           | API Source                                          | Notes                                                        |
+| -------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
 | Alert Configurations | `GET /api/atlas/v2/groups/{projectId}/alertConfigs` | Includes metric threshold, threshold, and event-based alerts |
 
 All Atlas alert configuration types are fetched, including host, replica set, sharded cluster, and user-defined alerts.
@@ -37,13 +37,13 @@ providers:
     # pageSize: 100                       # optional
 ```
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `publicKey` | `string` | Yes | — | Atlas API public key |
-| `privateKey` | `string` | Yes | — | Atlas API private key |
-| `projectIds` | `string[]` | Yes | — | Atlas project (group) IDs to scan |
-| `baseUrl` | `string` | No | `https://cloud.mongodb.com` | Atlas API base URL |
-| `pageSize` | `number` | No | `100` | Number of alerts per API page |
+| Field        | Type       | Required | Default                     | Description                       |
+| ------------ | ---------- | -------- | --------------------------- | --------------------------------- |
+| `publicKey`  | `string`   | Yes      | —                           | Atlas API public key              |
+| `privateKey` | `string`   | Yes      | —                           | Atlas API private key             |
+| `projectIds` | `string[]` | Yes      | —                           | Atlas project (group) IDs to scan |
+| `baseUrl`    | `string`   | No       | `https://cloud.mongodb.com` | Atlas API base URL                |
+| `pageSize`   | `number`   | No       | `100`                       | Number of alerts per API page     |
 
 ## Required Permissions
 
@@ -53,19 +53,19 @@ Minimum required permission: `GROUP_READ_ONLY`
 
 ## Field Mapping
 
-| AlertDefinition Field | Source |
-|-----------------------|--------|
-| `id` | `generateAlertId('mongodb-atlas', id)` |
-| `sourceId` | `id` (alert config ID) |
-| `name` | Built from `eventTypeName` + `metricThreshold.metricName` |
-| `description` | Empty string (Atlas alert configs have no description) |
-| `enabled` | `enabled` |
-| `severity` | `'unknown'` (Atlas has no native severity field) |
-| `conditionSummary` | Built from `metricThreshold` (metric, operator, threshold, units), `threshold`, and `matchers` |
+| AlertDefinition Field | Source                                                                                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                  | `generateAlertId('mongodb-atlas', id)`                                                                                                                   |
+| `sourceId`            | `id` (alert config ID)                                                                                                                                   |
+| `name`                | Built from `eventTypeName` + `metricThreshold.metricName`                                                                                                |
+| `description`         | Empty string (Atlas alert configs have no description)                                                                                                   |
+| `enabled`             | `enabled`                                                                                                                                                |
+| `severity`            | `'unknown'` (Atlas has no native severity field)                                                                                                         |
+| `conditionSummary`    | Built from `metricThreshold` (metric, operator, threshold, units), `threshold`, and `matchers`                                                           |
 | `notificationTargets` | Extracted from `notifications` array by type (EMAIL, SMS, SLACK, WEBHOOK, PAGER_DUTY, DATADOG, OPS_GENIE, VICTOR_OPS, MICROSOFT_TEAMS, TEAM, GROUP, ORG) |
-| `tags` | Empty (Atlas alert configs have no native tags) |
-| `owner` | Empty string |
-| `lastModifiedAt` | `updated` timestamp |
+| `tags`                | Empty (Atlas alert configs have no native tags)                                                                                                          |
+| `owner`               | Empty string                                                                                                                                             |
+| `lastModifiedAt`      | `updated` timestamp                                                                                                                                      |
 
 ## Limitations
 

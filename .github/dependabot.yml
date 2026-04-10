@@ -7,21 +7,21 @@ updates:
     groups:
       aws-sdk:
         patterns:
-          - "@aws-sdk/*"
+          - '@aws-sdk/*'
       azure:
         patterns:
-          - "@azure/*"
+          - '@azure/*'
       elastic:
         patterns:
-          - "@elastic/*"
+          - '@elastic/*'
       eslint:
         patterns:
-          - "eslint*"
-          - "@typescript-eslint/*"
+          - 'eslint*'
+          - '@typescript-eslint/*'
       vitest:
         patterns:
-          - "vitest"
-          - "@vitest/*"
+          - 'vitest'
+          - '@vitest/*'
 
   - package-ecosystem: github-actions
     directory: /

@@ -27,9 +27,7 @@ export async function bootstrap(configPath?: string): Promise<Context> {
   const storage = await loadStoragePlugin(config);
   const providers = await loadProviderPlugins(config);
 
-  logger.info(
-    `Ready: storage=${storage.name}, providers=[${Object.keys(providers).join(', ')}]`,
-  );
+  logger.info(`Ready: storage=${storage.name}, providers=[${Object.keys(providers).join(', ')}]`);
 
   return {
     config,
@@ -43,9 +41,7 @@ export async function bootstrap(configPath?: string): Promise<Context> {
         try {
           await provider.dispose?.();
         } catch (err) {
-          errors.push(
-            new Error(`Failed to dispose provider '${name}': ${(err as Error).message}`),
-          );
+          errors.push(new Error(`Failed to dispose provider '${name}': ${(err as Error).message}`));
         }
       }
 

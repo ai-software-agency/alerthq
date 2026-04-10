@@ -127,12 +127,12 @@ Each storage package must:
 
 All outward-facing text is driven from a canonical source of truth in `packages/core/src/canonical/`:
 
-| File | Purpose |
-|------|---------|
-| `meta.ts` | Project metadata: name, description, packages, providers, severities, export formats |
-| `cli.ts` | CLI command definitions: name, usage, description, options, examples |
-| `generators.ts` | Runtime generators for `--help` text and `--llm-help` JSON |
-| `index.ts` | Re-exports all canonical data |
+| File            | Purpose                                                                              |
+| --------------- | ------------------------------------------------------------------------------------ |
+| `meta.ts`       | Project metadata: name, description, packages, providers, severities, export formats |
+| `cli.ts`        | CLI command definitions: name, usage, description, options, examples                 |
+| `generators.ts` | Runtime generators for `--help` text and `--llm-help` JSON                           |
+| `index.ts`      | Re-exports all canonical data                                                        |
 
 ### Surfaces driven by canonical data
 

@@ -49,10 +49,7 @@ function makeStorage(overrides: Partial<StorageProvider> = {}): StorageProvider 
   };
 }
 
-function makeProvider(
-  name: string,
-  alerts: AlertDefinition[] = [],
-): ProviderAdapter {
+function makeProvider(name: string, alerts: AlertDefinition[] = []): ProviderAdapter {
   return {
     name,
     initialize: vi.fn().mockResolvedValue(undefined),

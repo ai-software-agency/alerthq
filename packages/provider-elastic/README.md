@@ -4,10 +4,10 @@ Elastic Watcher + Kibana Rules alert provider for [alerthq](https://github.com/e
 
 ## Supported Alert Types
 
-| Alert Type | API Source | Notes |
-|------------|-----------|-------|
+| Alert Type             | API Source                                                   | Notes                                                             |
+| ---------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- |
 | Elasticsearch Watchers | `POST /_watcher/_query/watches` via `@elastic/elasticsearch` | All watcher types (compare, script, array_compare, always, never) |
-| Kibana Alerting Rules | `GET /api/alerting/rules/_find` via Kibana REST API | All rule types (metrics, logs, uptime, APM, etc.) |
+| Kibana Alerting Rules  | `GET /api/alerting/rules/_find` via Kibana REST API          | All rule types (metrics, logs, uptime, APM, etc.)                 |
 
 Kibana rules are only fetched when `kibanaUrl` is configured.
 
@@ -29,7 +29,7 @@ providers:
   elastic:
     enabled: true
     url: https://my-cluster.es.example.com:9200
-    kibanaUrl: https://my-cluster.kb.example.com:5601  # optional
+    kibanaUrl: https://my-cluster.kb.example.com:5601 # optional
     auth:
       type: basic
       username: elastic
@@ -40,16 +40,16 @@ providers:
     #   apiKey: base64encodedkey
 ```
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `url` | `string` | Yes | — | Elasticsearch cluster URL |
-| `kibanaUrl` | `string` | No | — | Kibana URL (enables Kibana rule fetching) |
-| `auth.type` | `'basic' \| 'apiKey'` | Yes | — | Authentication type |
-| `auth.username` | `string` | If basic | — | Elasticsearch username |
-| `auth.password` | `string` | If basic | — | Elasticsearch password |
-| `auth.apiKey` | `string` | If apiKey | — | Base64-encoded API key |
-| `watcherPageSize` | `number` | No | `100` | Page size for watcher queries |
-| `kibanaPageSize` | `number` | No | `100` | Page size for Kibana rule queries |
+| Field             | Type                  | Required  | Default | Description                               |
+| ----------------- | --------------------- | --------- | ------- | ----------------------------------------- |
+| `url`             | `string`              | Yes       | —       | Elasticsearch cluster URL                 |
+| `kibanaUrl`       | `string`              | No        | —       | Kibana URL (enables Kibana rule fetching) |
+| `auth.type`       | `'basic' \| 'apiKey'` | Yes       | —       | Authentication type                       |
+| `auth.username`   | `string`              | If basic  | —       | Elasticsearch username                    |
+| `auth.password`   | `string`              | If basic  | —       | Elasticsearch password                    |
+| `auth.apiKey`     | `string`              | If apiKey | —       | Base64-encoded API key                    |
+| `watcherPageSize` | `number`              | No        | `100`   | Page size for watcher queries             |
+| `kibanaPageSize`  | `number`              | No        | `100`   | Page size for Kibana rule queries         |
 
 ## Required Permissions
 
@@ -61,34 +61,34 @@ providers:
 
 ### Watchers
 
-| AlertDefinition Field | Source |
-|-----------------------|--------|
-| `id` | `generateAlertId('elastic-watcher', _id)` |
-| `source` | `'elastic-watcher'` |
-| `sourceId` | `_id` (watch ID) |
-| `name` | `_id` (watches have no separate name field) |
-| `description` | Empty string |
-| `enabled` | `status.state.active` |
-| `severity` | `'unknown'` (watchers have no native severity) |
-| `conditionSummary` | Built from `condition` block (compare, script, always, etc.) |
+| AlertDefinition Field | Source                                                                      |
+| --------------------- | --------------------------------------------------------------------------- |
+| `id`                  | `generateAlertId('elastic-watcher', _id)`                                   |
+| `source`              | `'elastic-watcher'`                                                         |
+| `sourceId`            | `_id` (watch ID)                                                            |
+| `name`                | `_id` (watches have no separate name field)                                 |
+| `description`         | Empty string                                                                |
+| `enabled`             | `status.state.active`                                                       |
+| `severity`            | `'unknown'` (watchers have no native severity)                              |
+| `conditionSummary`    | Built from `condition` block (compare, script, always, etc.)                |
 | `notificationTargets` | Extracted from `actions` (email, webhook, slack, pagerduty, logging, index) |
-| `tags` | Empty (watchers have no native tags) |
-| `lastModifiedAt` | `null` (not available from watcher API) |
+| `tags`                | Empty (watchers have no native tags)                                        |
+| `lastModifiedAt`      | `null` (not available from watcher API)                                     |
 
 ### Kibana Rules
 
-| AlertDefinition Field | Source |
-|-----------------------|--------|
-| `id` | `generateAlertId('elastic-kibana', id)` |
-| `source` | `'elastic-kibana'` |
-| `sourceId` | `id` (Kibana rule UUID) |
-| `name` | `name` |
-| `enabled` | `enabled` |
-| `severity` | `'unknown'` (Kibana rules have no unified severity field) |
-| `conditionSummary` | Built from `rule_type_id` + `params` (criteria, threshold, index) |
+| AlertDefinition Field | Source                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| `id`                  | `generateAlertId('elastic-kibana', id)`                                                   |
+| `source`              | `'elastic-kibana'`                                                                        |
+| `sourceId`            | `id` (Kibana rule UUID)                                                                   |
+| `name`                | `name`                                                                                    |
+| `enabled`             | `enabled`                                                                                 |
+| `severity`            | `'unknown'` (Kibana rules have no unified severity field)                                 |
+| `conditionSummary`    | Built from `rule_type_id` + `params` (criteria, threshold, index)                         |
 | `notificationTargets` | Extracted from `actions` by `actionTypeId` (email, slack, pagerduty, webhook, server-log) |
-| `tags` | Kibana tags converted to `{ tagName: 'true' }` record |
-| `lastModifiedAt` | `updatedAt` |
+| `tags`                | Kibana tags converted to `{ tagName: 'true' }` record                                     |
+| `lastModifiedAt`      | `updatedAt`                                                                               |
 
 ## Limitations
 

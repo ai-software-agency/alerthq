@@ -8,11 +8,7 @@ import type {
   AzureActivityLogAlertResource,
   AzureScheduledQueryRuleResource,
 } from './types.js';
-import {
-  mapMetricAlert,
-  mapActivityLogAlert,
-  mapScheduledQueryRule,
-} from './mapper.js';
+import { mapMetricAlert, mapActivityLogAlert, mapScheduledQueryRule } from './mapper.js';
 
 export class AzureMonitorProviderAdapter implements ProviderAdapter {
   readonly name = 'azure-monitor';

@@ -65,22 +65,74 @@ export function generateLlmHelp(): Record<string, unknown> {
       'deletes alerts in any provider.',
 
     alertDefinitionSchema: [
-      { field: 'id', type: 'string', description: 'First 12 chars of sha256(source + ":" + sourceId)' },
-      { field: 'version', type: 'number', description: 'FK to sync_runs.version; 0 = manual entry' },
-      { field: 'source', type: 'string', description: 'Provider key (e.g. "aws-cloudwatch") or "manual"' },
-      { field: 'sourceId', type: 'string', description: "Provider's native identifier or generated UUID" },
+      {
+        field: 'id',
+        type: 'string',
+        description: 'First 12 chars of sha256(source + ":" + sourceId)',
+      },
+      {
+        field: 'version',
+        type: 'number',
+        description: 'FK to sync_runs.version; 0 = manual entry',
+      },
+      {
+        field: 'source',
+        type: 'string',
+        description: 'Provider key (e.g. "aws-cloudwatch") or "manual"',
+      },
+      {
+        field: 'sourceId',
+        type: 'string',
+        description: "Provider's native identifier or generated UUID",
+      },
       { field: 'name', type: 'string', description: 'Human-readable alert name' },
       { field: 'description', type: 'string', description: 'Alert description' },
-      { field: 'enabled', type: 'boolean', description: 'Whether the alert is enabled in the source system' },
-      { field: 'severity', type: 'Severity', description: 'Normalized severity: critical | warning | info | unknown' },
-      { field: 'conditionSummary', type: 'string', description: 'Human-readable condition / threshold summary' },
-      { field: 'notificationTargets', type: 'string[]', description: 'Deduplicated notification targets (SNS ARNs, emails, etc.)' },
-      { field: 'tags', type: 'Record<string, string>', description: 'Merged tag map: provider tags + user overlay tags' },
+      {
+        field: 'enabled',
+        type: 'boolean',
+        description: 'Whether the alert is enabled in the source system',
+      },
+      {
+        field: 'severity',
+        type: 'Severity',
+        description: 'Normalized severity: critical | warning | info | unknown',
+      },
+      {
+        field: 'conditionSummary',
+        type: 'string',
+        description: 'Human-readable condition / threshold summary',
+      },
+      {
+        field: 'notificationTargets',
+        type: 'string[]',
+        description: 'Deduplicated notification targets (SNS ARNs, emails, etc.)',
+      },
+      {
+        field: 'tags',
+        type: 'Record<string, string>',
+        description: 'Merged tag map: provider tags + user overlay tags',
+      },
       { field: 'owner', type: 'string', description: 'Alert owner (team, user, or empty string)' },
-      { field: 'rawConfig', type: 'Record<string, unknown>', description: 'Raw provider configuration for reference' },
-      { field: 'configHash', type: 'string', description: 'sha256(rawConfig) — used for drift detection' },
-      { field: 'lastModifiedAt', type: 'string | null', description: 'Last modification timestamp from provider' },
-      { field: 'discoveredAt', type: 'string', description: 'ISO 8601 timestamp of first discovery' },
+      {
+        field: 'rawConfig',
+        type: 'Record<string, unknown>',
+        description: 'Raw provider configuration for reference',
+      },
+      {
+        field: 'configHash',
+        type: 'string',
+        description: 'sha256(rawConfig) — used for drift detection',
+      },
+      {
+        field: 'lastModifiedAt',
+        type: 'string | null',
+        description: 'Last modification timestamp from provider',
+      },
+      {
+        field: 'discoveredAt',
+        type: 'string',
+        description: 'ISO 8601 timestamp of first discovery',
+      },
     ],
 
     storageBackends: META.storageBackends.map((s) => ({

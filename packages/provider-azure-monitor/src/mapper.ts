@@ -73,9 +73,7 @@ export function mapMetricAlert(resource: AzureMetricAlertResource): AlertDefinit
 /**
  * Build condition summary from metric alert criteria.
  */
-export function summarizeMetricCriteria(
-  resource: AzureMetricAlertResource,
-): string {
+export function summarizeMetricCriteria(resource: AzureMetricAlertResource): string {
   const criteria = resource.properties.criteria;
   if (!criteria?.allOf || criteria.allOf.length === 0) {
     return 'No criteria defined';
@@ -100,15 +98,14 @@ export function summarizeMetricCriteria(
 /**
  * Map an Azure activity log alert resource to an AlertDefinition.
  */
-export function mapActivityLogAlert(
-  resource: AzureActivityLogAlertResource,
-): AlertDefinition {
+export function mapActivityLogAlert(resource: AzureActivityLogAlertResource): AlertDefinition {
   const source = 'azure-activity-log-alert';
   const sourceId = resource.id;
   const raw = resource as unknown as Record<string, unknown>;
 
-  const actionGroupIds = (resource.properties.actions?.actionGroups ?? [])
-    .map((a) => a.actionGroupId);
+  const actionGroupIds = (resource.properties.actions?.actionGroups ?? []).map(
+    (a) => a.actionGroupId,
+  );
 
   return {
     id: generateAlertId(source, sourceId),
@@ -133,9 +130,7 @@ export function mapActivityLogAlert(
 /**
  * Build condition summary from activity log alert conditions.
  */
-export function summarizeActivityLogCondition(
-  resource: AzureActivityLogAlertResource,
-): string {
+export function summarizeActivityLogCondition(resource: AzureActivityLogAlertResource): string {
   const conditions = resource.properties.condition?.allOf;
   if (!conditions || conditions.length === 0) {
     return 'No conditions defined';
@@ -159,9 +154,7 @@ export function summarizeActivityLogCondition(
 /**
  * Map an Azure scheduled query rule resource to an AlertDefinition.
  */
-export function mapScheduledQueryRule(
-  resource: AzureScheduledQueryRuleResource,
-): AlertDefinition {
+export function mapScheduledQueryRule(resource: AzureScheduledQueryRuleResource): AlertDefinition {
   const source = 'azure-scheduled-query-rule';
   const sourceId = resource.id;
   const raw = resource as unknown as Record<string, unknown>;
@@ -191,9 +184,7 @@ export function mapScheduledQueryRule(
 /**
  * Build condition summary from scheduled query rule criteria.
  */
-export function summarizeScheduledQueryCriteria(
-  resource: AzureScheduledQueryRuleResource,
-): string {
+export function summarizeScheduledQueryCriteria(resource: AzureScheduledQueryRuleResource): string {
   const criteria = resource.properties.criteria;
   if (!criteria?.allOf || criteria.allOf.length === 0) {
     return 'No criteria defined';

@@ -4,11 +4,11 @@ GCP Cloud Monitoring alert provider for [alerthq](https://github.com/edrv/alerth
 
 ## Supported Alert Types
 
-| Alert Type | API Source | Notes |
-|------------|-----------|-------|
-| Metric threshold alerts | `AlertPolicyServiceClient.listAlertPolicies()` via `@google-cloud/monitoring` | Conditions based on metric thresholds (e.g. CPU > 80%) |
-| Metric absence alerts | Same API | Conditions that fire when a metric stops reporting |
-| Log-based alerts | Same API | Conditions that match log entries (`conditionMatchedLog`) |
+| Alert Type              | API Source                                                                    | Notes                                                     |
+| ----------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Metric threshold alerts | `AlertPolicyServiceClient.listAlertPolicies()` via `@google-cloud/monitoring` | Conditions based on metric thresholds (e.g. CPU > 80%)    |
+| Metric absence alerts   | Same API                                                                      | Conditions that fire when a metric stops reporting        |
+| Log-based alerts        | Same API                                                                      | Conditions that match log entries (`conditionMatchedLog`) |
 
 ## Authentication
 
@@ -43,11 +43,11 @@ providers:
     keyFilename: /path/to/service-account.json
 ```
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `projectId` | `string` | Yes | — | GCP project ID to scan for alert policies |
-| `keyFilename` | `string` | No | — | Path to a service account JSON key file |
-| `credentials` | `object` | No | — | Inline credentials with `client_email` and `private_key` |
+| Field         | Type     | Required | Default | Description                                              |
+| ------------- | -------- | -------- | ------- | -------------------------------------------------------- |
+| `projectId`   | `string` | Yes      | —       | GCP project ID to scan for alert policies                |
+| `keyFilename` | `string` | No       | —       | Path to a service account JSON key file                  |
+| `credentials` | `object` | No       | —       | Inline credentials with `client_email` and `private_key` |
 
 ## Required Permissions
 
@@ -58,20 +58,20 @@ The authenticated identity needs the **Monitoring Viewer** role (`roles/monitori
 
 ## Field Mapping
 
-| AlertDefinition Field | Source |
-|-----------------------|--------|
-| `id` | `generateAlertId('gcp-monitoring', policy.name)` |
-| `source` | `'gcp-monitoring'` |
-| `sourceId` | `policy.name` (full resource name, e.g. `projects/{project}/alertPolicies/{id}`) |
-| `name` | `policy.displayName` |
-| `description` | `policy.documentation.content` |
-| `enabled` | `policy.enabled.value` (BoolValue wrapper, defaults to `true`) |
-| `severity` | `policy.severity` mapped: CRITICAL = critical, ERROR = warning, WARNING = info, unset = unknown |
-| `conditionSummary` | Built from `policy.conditions` (filter, comparison, threshold) joined by combiner |
-| `notificationTargets` | `policy.notificationChannels` resolved to display names via channel lookup |
-| `tags` | `policy.userLabels` |
-| `owner` | `policy.mutationRecord.mutatedBy` (falls back to `creationRecord.mutatedBy`) |
-| `lastModifiedAt` | `policy.mutationRecord.mutateTime` converted to ISO 8601 |
+| AlertDefinition Field | Source                                                                                          |
+| --------------------- | ----------------------------------------------------------------------------------------------- |
+| `id`                  | `generateAlertId('gcp-monitoring', policy.name)`                                                |
+| `source`              | `'gcp-monitoring'`                                                                              |
+| `sourceId`            | `policy.name` (full resource name, e.g. `projects/{project}/alertPolicies/{id}`)                |
+| `name`                | `policy.displayName`                                                                            |
+| `description`         | `policy.documentation.content`                                                                  |
+| `enabled`             | `policy.enabled.value` (BoolValue wrapper, defaults to `true`)                                  |
+| `severity`            | `policy.severity` mapped: CRITICAL = critical, ERROR = warning, WARNING = info, unset = unknown |
+| `conditionSummary`    | Built from `policy.conditions` (filter, comparison, threshold) joined by combiner               |
+| `notificationTargets` | `policy.notificationChannels` resolved to display names via channel lookup                      |
+| `tags`                | `policy.userLabels`                                                                             |
+| `owner`               | `policy.mutationRecord.mutatedBy` (falls back to `creationRecord.mutatedBy`)                    |
+| `lastModifiedAt`      | `policy.mutationRecord.mutateTime` converted to ISO 8601                                        |
 
 ## Limitations
 

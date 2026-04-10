@@ -30,7 +30,7 @@ providers:
   elastic:
     enabled: true
     # url: ${ELASTIC_URL}                   # optional — needed for Watcher alerts
-    kibanaUrl: ${ELASTIC_KIBANA_URL}        # optional — needed for Kibana alerting rules
+    kibanaUrl: ${ELASTIC_KIBANA_URL} # optional — needed for Kibana alerting rules
 
     # Option 1: API key auth
     auth:

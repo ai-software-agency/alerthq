@@ -4,8 +4,8 @@ Grafana alert provider for [alerthq](https://github.com/edrv/alerthq).
 
 ## Supported Alert Types
 
-| Alert Type | API Source | Notes |
-|------------|-----------|-------|
+| Alert Type                  | API Source                             | Notes                         |
+| --------------------------- | -------------------------------------- | ----------------------------- |
 | Grafana-managed alert rules | `GET /api/v1/provisioning/alert-rules` | Unified alerting (Grafana 9+) |
 
 ## Authentication
@@ -32,12 +32,12 @@ providers:
     #   password: changeme
 ```
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `url` | `string` | Yes | — | Grafana instance base URL |
-| `apiKey` | `string` | No | — | API key or service account token |
-| `basicAuth.username` | `string` | No | — | Basic auth username |
-| `basicAuth.password` | `string` | No | — | Basic auth password |
+| Field                | Type     | Required | Default | Description                      |
+| -------------------- | -------- | -------- | ------- | -------------------------------- |
+| `url`                | `string` | Yes      | —       | Grafana instance base URL        |
+| `apiKey`             | `string` | No       | —       | API key or service account token |
+| `basicAuth.username` | `string` | No       | —       | Basic auth username              |
+| `basicAuth.password` | `string` | No       | —       | Basic auth password              |
 
 ## Required Permissions
 
@@ -47,20 +47,20 @@ For contact point resolution, `alert.notifications:read` is also recommended.
 
 ## Field Mapping
 
-| AlertDefinition Field | Source |
-|-----------------------|--------|
-| `id` | `generateAlertId('grafana', uid)` |
-| `source` | `'grafana'` |
-| `sourceId` | `uid` |
-| `name` | `title` |
-| `description` | `annotations.description` (fallback: `annotations.summary`) |
-| `enabled` | `!isPaused` |
-| `severity` | `labels.severity` (critical/warning/info, fallback: unknown) |
-| `conditionSummary` | Built from `condition` + `data` + `for` duration |
-| `notificationTargets` | `notification_settings.receiver` |
-| `tags` | `labels` |
-| `owner` | Empty string (not available from Grafana API) |
-| `lastModifiedAt` | `updated` |
+| AlertDefinition Field | Source                                                       |
+| --------------------- | ------------------------------------------------------------ |
+| `id`                  | `generateAlertId('grafana', uid)`                            |
+| `source`              | `'grafana'`                                                  |
+| `sourceId`            | `uid`                                                        |
+| `name`                | `title`                                                      |
+| `description`         | `annotations.description` (fallback: `annotations.summary`)  |
+| `enabled`             | `!isPaused`                                                  |
+| `severity`            | `labels.severity` (critical/warning/info, fallback: unknown) |
+| `conditionSummary`    | Built from `condition` + `data` + `for` duration             |
+| `notificationTargets` | `notification_settings.receiver`                             |
+| `tags`                | `labels`                                                     |
+| `owner`               | Empty string (not available from Grafana API)                |
+| `lastModifiedAt`      | `updated`                                                    |
 
 ## Limitations
 

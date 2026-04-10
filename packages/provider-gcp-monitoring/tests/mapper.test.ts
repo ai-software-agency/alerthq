@@ -228,10 +228,7 @@ describe('mapAlertPolicyToAlertDefinition', () => {
 
   it('resolves notification channels through channelMap', () => {
     const result = mapAlertPolicyToAlertDefinition(makePolicy(), makeChannelMap());
-    expect(result.notificationTargets).toEqual([
-      '#alerts-critical',
-      'oncall-email@example.com',
-    ]);
+    expect(result.notificationTargets).toEqual(['#alerts-critical', 'oncall-email@example.com']);
   });
 
   it('falls back to raw channel name when not in channelMap', () => {

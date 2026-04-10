@@ -26,7 +26,9 @@ const metricFixture1: AzureMetricAlertResource = {
     description: 'Alert when CPU exceeds 90%',
     severity: 0,
     enabled: true,
-    scopes: ['/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Compute/virtualMachines/vm-web-01'],
+    scopes: [
+      '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Compute/virtualMachines/vm-web-01',
+    ],
     criteria: {
       'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria',
       allOf: [
@@ -42,7 +44,10 @@ const metricFixture1: AzureMetricAlertResource = {
       ],
     },
     actions: [
-      { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team' },
+      {
+        actionGroupId:
+          '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team',
+      },
     ],
     evaluationFrequency: 'PT5M',
     windowSize: 'PT15M',
@@ -76,8 +81,14 @@ const metricFixture2: AzureMetricAlertResource = {
       ],
     },
     actions: [
-      { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/devs' },
-      { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team' },
+      {
+        actionGroupId:
+          '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/devs',
+      },
+      {
+        actionGroupId:
+          '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team',
+      },
     ],
   },
   systemData: {
@@ -105,7 +116,10 @@ const activityLogFixture1: AzureActivityLogAlertResource = {
     },
     actions: {
       actionGroups: [
-        { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/infra-team' },
+        {
+          actionGroupId:
+            '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/infra-team',
+        },
       ],
     },
   },
@@ -132,7 +146,10 @@ const activityLogFixture2: AzureActivityLogAlertResource = {
     },
     actions: {
       actionGroups: [
-        { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/security-team' },
+        {
+          actionGroupId:
+            '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/security-team',
+        },
       ],
     },
   },
@@ -151,11 +168,14 @@ const queryRuleFixture1: AzureScheduledQueryRuleResource = {
     description: 'Alert when error rate exceeds 5%',
     severity: 1,
     enabled: true,
-    scopes: ['/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.OperationalInsights/workspaces/logs-ws'],
+    scopes: [
+      '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.OperationalInsights/workspaces/logs-ws',
+    ],
     criteria: {
       allOf: [
         {
-          query: 'requests | where resultCode >= 500 | summarize errorCount = count() by bin(timestamp, 5m)',
+          query:
+            'requests | where resultCode >= 500 | summarize errorCount = count() by bin(timestamp, 5m)',
           timeAggregation: 'Count',
           operator: 'GreaterThan',
           threshold: 50,
@@ -289,7 +309,9 @@ describe('mapActivityLogAlert', () => {
     const alert = mapActivityLogAlert(activityLogFixture2);
     expect(alert.name).toBe('vm-delete-alert');
     expect(alert.conditionSummary).toContain('category == Administrative');
-    expect(alert.conditionSummary).toContain('operationName == Microsoft.Compute/virtualMachines/delete');
+    expect(alert.conditionSummary).toContain(
+      'operationName == Microsoft.Compute/virtualMachines/delete',
+    );
     expect(alert.conditionSummary).toContain('status in [Succeeded, Failed]');
     expect(alert.notificationTargets).toContain('actionGroup:security-team');
     expect(alert.lastModifiedAt).toBeNull();

@@ -88,13 +88,16 @@ const kibanaFixture1: KibanaRule = {
   tags: ['production', 'backend'],
   rule_type_id: 'metrics.alert.threshold',
   params: {
-    criteria: [
-      { metric: 'error_rate', comparator: '>', threshold: [5] },
-    ],
+    criteria: [{ metric: 'error_rate', comparator: '>', threshold: [5] }],
     index: ['logs-*'],
   },
   actions: [
-    { id: 'action-1', group: 'threshold', actionTypeId: '.email', params: { to: ['dev@example.com'] } },
+    {
+      id: 'action-1',
+      group: 'threshold',
+      actionTypeId: '.email',
+      params: { to: ['dev@example.com'] },
+    },
     { id: 'action-2', group: 'threshold', actionTypeId: '.slack', params: { channel: '#alerts' } },
   ],
   updatedAt: '2025-03-15T10:30:00Z',
@@ -115,7 +118,12 @@ const kibanaFixture2: KibanaRule = {
     timerangeUnit: 'm',
   },
   actions: [
-    { id: 'action-3', group: 'xpack.uptime.alerts.actionGroups.monitorStatus', actionTypeId: '.pagerduty', params: {} },
+    {
+      id: 'action-3',
+      group: 'xpack.uptime.alerts.actionGroups.monitorStatus',
+      actionTypeId: '.pagerduty',
+      params: {},
+    },
   ],
   updatedAt: '2025-02-20T08:00:00Z',
   createdAt: '2024-12-01T00:00:00Z',
@@ -130,14 +138,17 @@ const kibanaFixture3: KibanaRule = {
   tags: [],
   rule_type_id: 'logs.alert.document.count',
   params: {
-    criteria: [
-      { field: 'log.level', condition: 'is', value: 'error' },
-    ],
+    criteria: [{ field: 'log.level', condition: 'is', value: 'error' }],
     threshold: 100,
     index: ['filebeat-*'],
   },
   actions: [
-    { id: 'action-4', group: 'threshold', actionTypeId: '.webhook', params: { url: 'https://hooks.example.com' } },
+    {
+      id: 'action-4',
+      group: 'threshold',
+      actionTypeId: '.webhook',
+      params: { url: 'https://hooks.example.com' },
+    },
     { id: 'action-5', group: 'threshold', actionTypeId: '.server-log', params: {} },
   ],
   updatedAt: '2025-04-01T12:00:00Z',

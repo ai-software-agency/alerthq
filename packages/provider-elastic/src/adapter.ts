@@ -46,13 +46,18 @@ export class ElasticProviderAdapter implements ProviderAdapter {
       try {
         logger.debug(`[elastic] Pinging Elasticsearch at ${this.config.url}`);
         const resp = await this.client.ping();
-        const esOk = resp === true || (resp as unknown as { statusCode: number }).statusCode === 200;
+        const esOk =
+          resp === true || (resp as unknown as { statusCode: number }).statusCode === 200;
         if (!esOk) {
-          logger.debug(`[elastic] Elasticsearch ping returned non-OK response: ${JSON.stringify(resp)}`);
+          logger.debug(
+            `[elastic] Elasticsearch ping returned non-OK response: ${JSON.stringify(resp)}`,
+          );
           return false;
         }
       } catch (err) {
-        logger.debug(`[elastic] Elasticsearch ping failed at ${this.config.url}: ${(err as Error).message ?? String(err)}`);
+        logger.debug(
+          `[elastic] Elasticsearch ping failed at ${this.config.url}: ${(err as Error).message ?? String(err)}`,
+        );
         return false;
       }
     }
@@ -73,7 +78,9 @@ export class ElasticProviderAdapter implements ProviderAdapter {
         const resp = await fetch(url, { headers });
         if (!resp.ok) {
           const body = await resp.text().catch(() => '');
-          logger.debug(`[elastic] Kibana alerting API failed: ${resp.status} ${resp.statusText} — ${body}`);
+          logger.debug(
+            `[elastic] Kibana alerting API failed: ${resp.status} ${resp.statusText} — ${body}`,
+          );
           return false;
         }
       } catch (err) {

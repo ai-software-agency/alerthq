@@ -16,9 +16,7 @@ const fixture1: AtlasAlertConfig = {
   enabled: true,
   created: '2024-09-01T00:00:00Z',
   updated: '2025-03-10T14:30:00Z',
-  matchers: [
-    { fieldName: 'HOSTNAME', operator: 'EQUALS', value: 'cluster0-shard-00-00' },
-  ],
+  matchers: [{ fieldName: 'HOSTNAME', operator: 'EQUALS', value: 'cluster0-shard-00-00' }],
   metricThreshold: {
     metricName: 'NORMALIZED_SYSTEM_CPU_USER',
     operator: 'GREATER_THAN',

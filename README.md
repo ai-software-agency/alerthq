@@ -45,19 +45,19 @@ Overlay tags and manual alert entries persist across syncs. The tool is strictly
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `@alerthq/core` | Domain types, plugin interfaces, config/plugin loading, core functions |
-| `@alerthq/cli` | CLI commands powered by `@alerthq/core` |
-| `@alerthq/storage-sqlite` | SQLite storage backend |
-| `@alerthq/storage-postgresql` | PostgreSQL storage backend |
-| `@alerthq/provider-aws-cloudwatch` | AWS CloudWatch alert provider |
-| `@alerthq/provider-elastic` | Elastic Watcher + Kibana Rules provider |
-| `@alerthq/provider-mongodb-atlas` | MongoDB Atlas alert provider |
-| `@alerthq/provider-azure-monitor` | Azure Monitor alert provider |
-| `@alerthq/provider-datadog` | Datadog alert provider |
-| `@alerthq/provider-gcp-monitoring` | GCP Cloud Monitoring alert provider |
-| `@alerthq/provider-grafana` | Grafana alert provider |
+| Package                            | Description                                                            |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| `@alerthq/core`                    | Domain types, plugin interfaces, config/plugin loading, core functions |
+| `@alerthq/cli`                     | CLI commands powered by `@alerthq/core`                                |
+| `@alerthq/storage-sqlite`          | SQLite storage backend                                                 |
+| `@alerthq/storage-postgresql`      | PostgreSQL storage backend                                             |
+| `@alerthq/provider-aws-cloudwatch` | AWS CloudWatch alert provider                                          |
+| `@alerthq/provider-elastic`        | Elastic Watcher + Kibana Rules provider                                |
+| `@alerthq/provider-mongodb-atlas`  | MongoDB Atlas alert provider                                           |
+| `@alerthq/provider-azure-monitor`  | Azure Monitor alert provider                                           |
+| `@alerthq/provider-datadog`        | Datadog alert provider                                                 |
+| `@alerthq/provider-gcp-monitoring` | GCP Cloud Monitoring alert provider                                    |
+| `@alerthq/provider-grafana`        | Grafana alert provider                                                 |
 
 ## Quick Start
 
@@ -69,20 +69,20 @@ npx alerthq list
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `init` | Interactive setup — generate alerthq.config.yml |
-| `test` | Test connections to storage and all providers |
-| `sync` | Sync alert definitions from providers |
-| `list` | List alert definitions with filters |
-| `show` | Show detailed information for a single alert |
-| `diff` | Show differences between two sync versions |
-| `versions` | List sync history |
-| `add` | Add a manual alert definition |
-| `remove` | Remove a manual alert definition |
-| `tag` | Set or remove an overlay tag on an alert |
-| `export` | Export alerts to CSV or JSON |
-| `stats` | Show summary statistics for alerts |
+| Command    | Description                                     |
+| ---------- | ----------------------------------------------- |
+| `init`     | Interactive setup — generate alerthq.config.yml |
+| `test`     | Test connections to storage and all providers   |
+| `sync`     | Sync alert definitions from providers           |
+| `list`     | List alert definitions with filters             |
+| `show`     | Show detailed information for a single alert    |
+| `diff`     | Show differences between two sync versions      |
+| `versions` | List sync history                               |
+| `add`      | Add a manual alert definition                   |
+| `remove`   | Remove a manual alert definition                |
+| `tag`      | Set or remove an overlay tag on an alert        |
+| `export`   | Export alerts to CSV or JSON                    |
+| `stats`    | Show summary statistics for alerts              |
 
 ## Configuration Reference
 
@@ -93,10 +93,10 @@ alerthq reads `alerthq.config.yml` from the current working directory. Environme
 ```yaml
 # alerthq.config.yml
 storage:
-  provider: sqlite           # or "postgresql"
+  provider: sqlite # or "postgresql"
 
   sqlite:
-    path: ./alerthq.db       # SQLite file path (default: ./alerthq.db)
+    path: ./alerthq.db # SQLite file path (default: ./alerthq.db)
 
   # postgresql:
   #   connectionString: ${DATABASE_URL}
@@ -104,7 +104,7 @@ storage:
 
 providers:
   aws-cloudwatch:
-    enabled: true             # optional, defaults to true
+    enabled: true # optional, defaults to true
     regions:
       - us-east-1
       - eu-west-1
@@ -151,15 +151,15 @@ providers:
 
 ### Provider config reference
 
-| Provider | Required Fields | Optional Fields |
-|----------|----------------|-----------------|
-| `aws-cloudwatch` | `regions` | `credentials.accessKeyId`, `credentials.secretAccessKey`, `credentials.sessionToken` |
-| `elastic` | `url`, `auth.type` | `kibanaUrl`, `auth.username`, `auth.password`, `auth.apiKey` |
-| `mongodb-atlas` | `publicKey`, `privateKey`, `projectIds` | `baseUrl`, `pageSize` |
-| `azure-monitor` | `subscriptionIds` | — |
-| `datadog` | `apiKey`, `appKey` | `site` |
-| `gcp-monitoring` | `projectId` | `keyFilename`, `credentials.client_email`, `credentials.private_key` |
-| `grafana` | `url` | `apiKey`, `basicAuth.username`, `basicAuth.password` |
+| Provider         | Required Fields                         | Optional Fields                                                                      |
+| ---------------- | --------------------------------------- | ------------------------------------------------------------------------------------ |
+| `aws-cloudwatch` | `regions`                               | `credentials.accessKeyId`, `credentials.secretAccessKey`, `credentials.sessionToken` |
+| `elastic`        | `url`, `auth.type`                      | `kibanaUrl`, `auth.username`, `auth.password`, `auth.apiKey`                         |
+| `mongodb-atlas`  | `publicKey`, `privateKey`, `projectIds` | `baseUrl`, `pageSize`                                                                |
+| `azure-monitor`  | `subscriptionIds`                       | —                                                                                    |
+| `datadog`        | `apiKey`, `appKey`                      | `site`                                                                               |
+| `gcp-monitoring` | `projectId`                             | `keyFilename`, `credentials.client_email`, `credentials.private_key`                 |
+| `grafana`        | `url`                                   | `apiKey`, `basicAuth.username`, `basicAuth.password`                                 |
 
 ## Output Examples
 

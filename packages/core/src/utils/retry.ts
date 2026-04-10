@@ -29,10 +29,7 @@ export interface RetryOptions {
  * @returns The resolved value from `fn`.
  * @throws The last error if all retries are exhausted, or if the signal is aborted.
  */
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  opts?: RetryOptions,
-): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, opts?: RetryOptions): Promise<T> {
   const retries = opts?.retries ?? 3;
   const baseDelay = opts?.baseDelay ?? 1000;
   const isRetryable = opts?.isRetryable ?? (() => true);

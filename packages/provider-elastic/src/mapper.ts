@@ -33,9 +33,7 @@ export function mapWatcher(watch: WatchRecord): AlertDefinition {
 /**
  * Build a human-readable condition summary from a watcher condition block.
  */
-export function summarizeWatcherCondition(
-  condition?: Record<string, unknown>,
-): string {
+export function summarizeWatcherCondition(condition?: Record<string, unknown>): string {
   if (!condition) return 'No condition';
 
   if (condition.compare) {
@@ -75,9 +73,7 @@ export function summarizeWatcherCondition(
 /**
  * Extract notification targets from watcher actions.
  */
-export function extractWatcherTargets(
-  actions: Record<string, unknown>,
-): string[] {
+export function extractWatcherTargets(actions: Record<string, unknown>): string[] {
   const targets: string[] = [];
 
   for (const [name, action] of Object.entries(actions)) {
@@ -95,7 +91,11 @@ export function extractWatcherTargets(
 
     if (a.webhook) {
       const wh = a.webhook as Record<string, unknown>;
-      const url = wh.url ?? (wh.host ? `${String(wh.host)}:${String(wh.port ?? 80)}${String(wh.path ?? '')}` : undefined);
+      const url =
+        wh.url ??
+        (wh.host
+          ? `${String(wh.host)}:${String(wh.port ?? 80)}${String(wh.path ?? '')}`
+          : undefined);
       if (url) targets.push(`webhook:${String(url)}`);
     }
 
@@ -174,7 +174,9 @@ export function summarizeKibanaCondition(
   }
 
   if (params.index) {
-    parts.push(`index: ${String(Array.isArray(params.index) ? params.index.join(',') : params.index)}`);
+    parts.push(
+      `index: ${String(Array.isArray(params.index) ? params.index.join(',') : params.index)}`,
+    );
   }
 
   return parts.join('; ');

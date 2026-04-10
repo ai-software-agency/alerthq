@@ -9,9 +9,7 @@ describe('GcpMonitoringAdapter.initialize', () => {
 
   it('throws on missing projectId', async () => {
     const adapter = new GcpMonitoringAdapter();
-    await expect(adapter.initialize({ projectId: '' })).rejects.toThrow(
-      'projectId is required',
-    );
+    await expect(adapter.initialize({ projectId: '' })).rejects.toThrow('projectId is required');
   });
 
   it('throws when projectId is not a string', async () => {
@@ -21,9 +19,7 @@ describe('GcpMonitoringAdapter.initialize', () => {
 
   it('accepts valid config with projectId', async () => {
     const adapter = new GcpMonitoringAdapter();
-    await expect(
-      adapter.initialize({ projectId: 'my-gcp-project' }),
-    ).resolves.toBeUndefined();
+    await expect(adapter.initialize({ projectId: 'my-gcp-project' })).resolves.toBeUndefined();
   });
 
   it('accepts config with optional keyFilename', async () => {

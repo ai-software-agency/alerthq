@@ -4,8 +4,8 @@ Datadog alert provider for [alerthq](https://github.com/edrv/alerthq).
 
 ## Supported Alert Types
 
-| Alert Type | API Source | Notes |
-|------------|-----------|-------|
+| Alert Type                | API Source                                                        | Notes                                                                                                           |
+| ------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | All Datadog monitor types | `v1.MonitorsApi.listMonitors()` via `@datadog/datadog-api-client` | Includes metric, log, anomaly, composite, forecast, outlier, APM, process, network, event, synthetics, and more |
 
 ## Authentication
@@ -31,11 +31,11 @@ providers:
     # site: datadoghq.eu
 ```
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `apiKey` | `string` | Yes | — | Datadog API key |
-| `appKey` | `string` | Yes | — | Datadog Application key |
-| `site` | `string` | No | `datadoghq.com` | Datadog site (`datadoghq.com`, `datadoghq.eu`, `us5.datadoghq.com`, etc.) |
+| Field    | Type     | Required | Default         | Description                                                               |
+| -------- | -------- | -------- | --------------- | ------------------------------------------------------------------------- |
+| `apiKey` | `string` | Yes      | —               | Datadog API key                                                           |
+| `appKey` | `string` | Yes      | —               | Datadog Application key                                                   |
+| `site`   | `string` | No       | `datadoghq.com` | Datadog site (`datadoghq.com`, `datadoghq.eu`, `us5.datadoghq.com`, etc.) |
 
 ## Required Permissions
 
@@ -43,19 +43,19 @@ The API key and Application key need the `monitors_read` scope (read-only access
 
 ## Field Mapping
 
-| AlertDefinition Field | Source |
-|-----------------------|--------|
-| `id` | `generateAlertId('datadog', String(monitor.id))` |
-| `sourceId` | `String(monitor.id)` |
-| `name` | `monitor.name` |
-| `description` | `monitor.message` |
-| `enabled` | Always `true` |
-| `severity` | From `monitor.priority`: P1/P2 → critical, P3 → warning, P4/P5 → info, null → unknown |
-| `conditionSummary` | `"${monitor.type}: ${monitor.query}"` |
-| `notificationTargets` | @-mentions extracted from `monitor.message` |
-| `tags` | `monitor.tags` split on `:` into key/value pairs |
-| `owner` | `monitor.creator.handle` |
-| `lastModifiedAt` | `monitor.modified` |
+| AlertDefinition Field | Source                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------- |
+| `id`                  | `generateAlertId('datadog', String(monitor.id))`                                      |
+| `sourceId`            | `String(monitor.id)`                                                                  |
+| `name`                | `monitor.name`                                                                        |
+| `description`         | `monitor.message`                                                                     |
+| `enabled`             | Always `true`                                                                         |
+| `severity`            | From `monitor.priority`: P1/P2 → critical, P3 → warning, P4/P5 → info, null → unknown |
+| `conditionSummary`    | `"${monitor.type}: ${monitor.query}"`                                                 |
+| `notificationTargets` | @-mentions extracted from `monitor.message`                                           |
+| `tags`                | `monitor.tags` split on `:` into key/value pairs                                      |
+| `owner`               | `monitor.creator.handle`                                                              |
+| `lastModifiedAt`      | `monitor.modified`                                                                    |
 
 ## Limitations
 

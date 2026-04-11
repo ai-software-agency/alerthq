@@ -74,6 +74,13 @@ export async function sync(ctx: Context, opts?: SyncOptions): Promise<SyncRun | 
   }
 
   const latestRun = await storage.getLatestSyncRun();
+
+  if (opts?.provider && latestRun) {
+    const targetedSources = new Set(providerEntries.flatMap(([, a]) => [...a.sources]));
+    const previousAlerts = await storage.getAlertDefinitions(latestRun.version);
+    allAlerts.push(...previousAlerts.filter((a) => !targetedSources.has(a.source)));
+  }
+
   if (latestRun) {
     const latestAlerts = await storage.getAlertDefinitions(latestRun.version);
     if (isSameAlertSet(latestAlerts, allAlerts)) {

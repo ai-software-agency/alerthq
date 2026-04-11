@@ -6,6 +6,7 @@ import { mapAlertRuleToAlertDefinition } from './mapper.js';
 
 export class GrafanaAdapter implements ProviderAdapter {
   readonly name = 'grafana';
+  readonly sources = ['grafana'] as const;
 
   private apiClient = new GrafanaApiClient();
 

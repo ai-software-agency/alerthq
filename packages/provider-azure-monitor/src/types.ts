@@ -1,30 +1,34 @@
-/** Azure Monitor alert resource types. */
+/**
+ * Azure Monitor alert resource types.
+ *
+ * These mirror the flat shape returned by @azure/arm-monitor v7 SDK
+ * (properties are top-level on the resource, NOT nested under `.properties`).
+ */
 
 export interface AzureMetricAlertResource {
-  id: string;
-  name: string;
-  type: string;
+  id?: string;
+  name?: string;
+  type?: string;
   location: string;
   tags?: Record<string, string>;
-  properties: {
-    description?: string;
-    severity?: number;
-    enabled?: boolean;
-    scopes?: string[];
-    criteria?: AzureMetricCriteria;
-    actions?: AzureActionGroup[];
-    autoMitigate?: boolean;
-    evaluationFrequency?: string;
-    windowSize?: string;
-    targetResourceType?: string;
-    targetResourceRegion?: string;
-  };
-  systemData?: AzureSystemData;
+  description?: string;
+  severity: number;
+  enabled: boolean;
+  scopes: string[];
+  criteria: AzureMetricCriteria;
+  autoMitigate?: boolean;
+  actions?: AzureMetricAlertAction[];
+  evaluationFrequency: string;
+  windowSize: string;
+  targetResourceType?: string;
+  targetResourceRegion?: string;
+  lastUpdatedTime?: Date;
 }
 
 export interface AzureMetricCriteria {
-  'odata.type'?: string;
+  odataType?: string;
   allOf?: AzureMetricCriterion[];
+  [property: string]: unknown;
 }
 
 export interface AzureMetricCriterion {
@@ -39,22 +43,31 @@ export interface AzureMetricCriterion {
   [key: string]: unknown;
 }
 
+export interface AzureMetricAlertAction {
+  actionGroupId?: string;
+  webHookProperties?: Record<string, string>;
+}
+
 export interface AzureActivityLogAlertResource {
-  id: string;
-  name: string;
-  type: string;
+  id?: string;
+  name?: string;
+  type?: string;
   location: string;
   tags?: Record<string, string>;
-  properties: {
-    description?: string;
-    enabled?: boolean;
-    scopes?: string[];
-    condition?: AzureActivityLogCondition;
-    actions?: {
-      actionGroups?: AzureActionGroupReference[];
-    };
-  };
-  systemData?: AzureSystemData;
+  scopes?: string[];
+  enabled?: boolean;
+  condition?: AzureActivityLogCondition;
+  actions?: AzureActivityLogAlertActionList;
+  description?: string;
+}
+
+export interface AzureActivityLogAlertActionList {
+  actionGroups?: AzureActivityLogActionGroup[];
+}
+
+export interface AzureActivityLogActionGroup {
+  actionGroupId: string;
+  webhookProperties?: Record<string, string>;
 }
 
 export interface AzureActivityLogCondition {
@@ -62,51 +75,59 @@ export interface AzureActivityLogCondition {
 }
 
 export interface AzureActivityLogLeafCondition {
-  field?: string;
-  equals?: string;
-  containsAny?: string[];
+  field: string;
+  equals: string;
+}
+
+/**
+ * LogSearchRuleResource — the v7 SDK shape for scheduledQueryRules.
+ * This is the older Log Analytics scheduled query rules API.
+ */
+export interface AzureScheduledQueryRuleResource {
+  id?: string;
+  name?: string;
+  type?: string;
+  location: string;
+  tags?: Record<string, string>;
+  description?: string;
+  displayName?: string;
+  enabled?: string;
+  source: AzureScheduledQuerySource;
+  schedule?: AzureScheduledQuerySchedule;
+  action: AzureScheduledQueryAction;
+  lastUpdatedTime?: Date;
+}
+
+export interface AzureScheduledQuerySource {
+  query?: string;
+  authorizedResources?: string[];
+  dataSourceId: string;
+  queryType?: string;
+}
+
+export interface AzureScheduledQuerySchedule {
+  frequencyInMinutes: number;
+  timeWindowInMinutes: number;
+}
+
+export interface AzureScheduledQueryAction {
+  odataType: string;
+  severity?: string;
+  aznsAction?: AzureAzNsActionGroup;
+  throttlingInMin?: number;
+  trigger?: AzureScheduledQueryTrigger;
   [key: string]: unknown;
 }
 
-export interface AzureScheduledQueryRuleResource {
-  id: string;
-  name: string;
-  type: string;
-  location: string;
-  tags?: Record<string, string>;
-  properties: {
-    description?: string;
-    severity?: number;
-    enabled?: boolean;
-    scopes?: string[];
-    criteria?: AzureScheduledQueryCriteria;
-    actions?: {
-      actionGroups?: string[];
-      customProperties?: Record<string, string>;
-    };
-    evaluationFrequency?: string;
-    windowSize?: string;
-    targetResourceTypes?: string[];
-    displayName?: string;
-  };
-  systemData?: AzureSystemData;
+export interface AzureAzNsActionGroup {
+  actionGroup?: string[];
+  emailSubject?: string;
+  customWebhookPayload?: string;
 }
 
-export interface AzureScheduledQueryCriteria {
-  allOf?: AzureScheduledQueryCondition[];
-}
-
-export interface AzureScheduledQueryCondition {
-  query?: string;
-  timeAggregation?: string;
-  metricMeasureColumn?: string;
-  operator?: string;
+export interface AzureScheduledQueryTrigger {
+  thresholdOperator?: string;
   threshold?: number;
-  dimensions?: AzureDimension[];
-  failingPeriods?: {
-    numberOfEvaluationPeriods?: number;
-    minFailingPeriodsToAlert?: number;
-  };
   [key: string]: unknown;
 }
 
@@ -114,25 +135,6 @@ export interface AzureDimension {
   name: string;
   operator: string;
   values: string[];
-}
-
-export interface AzureActionGroup {
-  actionGroupId?: string;
-  webHookProperties?: Record<string, string>;
-}
-
-export interface AzureActionGroupReference {
-  actionGroupId: string;
-  webhookProperties?: Record<string, string>;
-}
-
-export interface AzureSystemData {
-  createdBy?: string;
-  createdByType?: string;
-  createdAt?: string;
-  lastModifiedBy?: string;
-  lastModifiedByType?: string;
-  lastModifiedAt?: string;
 }
 
 /** Provider config shape. */

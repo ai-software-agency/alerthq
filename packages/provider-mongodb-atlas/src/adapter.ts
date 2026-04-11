@@ -9,6 +9,7 @@ const DEFAULT_PAGE_SIZE = 100;
 
 export class AtlasProviderAdapter implements ProviderAdapter {
   readonly name = 'mongodb-atlas';
+  readonly sources = ['mongodb-atlas'] as const;
 
   private config!: AtlasProviderConfig;
   private client!: DigestAuthClient;

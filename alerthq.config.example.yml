@@ -42,4 +42,5 @@ providers:
   # Install: pnpm add @alerthq/provider-azure-monitor
   # azure-monitor:
   #   enabled: true
-  #   subscriptionId: ${AZURE_SUBSCRIPTION_ID}
+  #   subscriptionIds:
+  #     - ${AZURE_SUBSCRIPTION_ID}

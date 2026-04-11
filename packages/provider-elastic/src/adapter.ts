@@ -13,6 +13,7 @@ const DEFAULT_KIBANA_PAGE_SIZE = 100;
 
 export class ElasticProviderAdapter implements ProviderAdapter {
   readonly name = 'elastic';
+  readonly sources = ['elastic-watcher', 'elastic-kibana'] as const;
 
   private client!: Client;
   private config!: ElasticProviderConfig;

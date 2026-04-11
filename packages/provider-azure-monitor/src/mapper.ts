@@ -7,14 +7,16 @@ import type {
 } from './types.js';
 
 /**
- * Map Azure severity number to alerthq Severity.
+ * Map Azure severity number (or string) to alerthq Severity.
  * Sev0/1 -> critical, Sev2 -> warning, Sev3/4 -> info
  */
-export function mapSeverity(sev?: number): Severity {
+export function mapSeverity(sev?: number | string): Severity {
   if (sev === undefined || sev === null) return 'unknown';
-  if (sev <= 1) return 'critical';
-  if (sev === 2) return 'warning';
-  if (sev <= 4) return 'info';
+  const n = typeof sev === 'string' ? parseInt(sev, 10) : sev;
+  if (Number.isNaN(n)) return 'unknown';
+  if (n <= 1) return 'critical';
+  if (n === 2) return 'warning';
+  if (n <= 4) return 'info';
   return 'unknown';
 }
 
@@ -40,13 +42,14 @@ function extractActionGroupNames(actionGroupIds: string[]): string[] {
 
 /**
  * Map an Azure metric alert resource to an AlertDefinition.
+ * SDK v7 returns properties flat on the resource (not nested under .properties).
  */
 export function mapMetricAlert(resource: AzureMetricAlertResource): AlertDefinition {
   const source = 'azure-metric-alert';
-  const sourceId = resource.id;
+  const sourceId = resource.id ?? '';
   const raw = resource as unknown as Record<string, unknown>;
 
-  const actionGroupIds = (resource.properties.actions ?? [])
+  const actionGroupIds = (resource.actions ?? [])
     .map((a) => a.actionGroupId)
     .filter((id): id is string => !!id);
 
@@ -55,17 +58,17 @@ export function mapMetricAlert(resource: AzureMetricAlertResource): AlertDefinit
     version: 0,
     source,
     sourceId,
-    name: resource.name,
-    description: resource.properties.description ?? '',
-    enabled: resource.properties.enabled ?? true,
-    severity: mapSeverity(resource.properties.severity),
+    name: resource.name ?? '',
+    description: resource.description ?? '',
+    enabled: resource.enabled ?? true,
+    severity: mapSeverity(resource.severity),
     conditionSummary: summarizeMetricCriteria(resource),
     notificationTargets: extractActionGroupNames(actionGroupIds),
     tags: resource.tags ?? {},
     owner: '',
     rawConfig: raw,
     configHash: hashConfig(raw),
-    lastModifiedAt: resource.systemData?.lastModifiedAt ?? null,
+    lastModifiedAt: resource.lastUpdatedTime?.toISOString() ?? null,
     discoveredAt: new Date().toISOString(),
   };
 }
@@ -76,7 +79,7 @@ export function mapMetricAlert(resource: AzureMetricAlertResource): AlertDefinit
 export function summarizeMetricCriteria(
   resource: AzureMetricAlertResource,
 ): string {
-  const criteria = resource.properties.criteria;
+  const criteria = resource.criteria;
   if (!criteria?.allOf || criteria.allOf.length === 0) {
     return 'No criteria defined';
   }
@@ -104,10 +107,10 @@ export function mapActivityLogAlert(
   resource: AzureActivityLogAlertResource,
 ): AlertDefinition {
   const source = 'azure-activity-log-alert';
-  const sourceId = resource.id;
+  const sourceId = resource.id ?? '';
   const raw = resource as unknown as Record<string, unknown>;
 
-  const actionGroupIds = (resource.properties.actions?.actionGroups ?? [])
+  const actionGroupIds = (resource.actions?.actionGroups ?? [])
     .map((a) => a.actionGroupId);
 
   return {
@@ -115,9 +118,9 @@ export function mapActivityLogAlert(
     version: 0,
     source,
     sourceId,
-    name: resource.name,
-    description: resource.properties.description ?? '',
-    enabled: resource.properties.enabled ?? true,
+    name: resource.name ?? '',
+    description: resource.description ?? '',
+    enabled: resource.enabled ?? true,
     severity: 'unknown',
     conditionSummary: summarizeActivityLogCondition(resource),
     notificationTargets: extractActionGroupNames(actionGroupIds),
@@ -125,7 +128,7 @@ export function mapActivityLogAlert(
     owner: '',
     rawConfig: raw,
     configHash: hashConfig(raw),
-    lastModifiedAt: resource.systemData?.lastModifiedAt ?? null,
+    lastModifiedAt: null,
     discoveredAt: new Date().toISOString(),
   };
 }
@@ -136,7 +139,7 @@ export function mapActivityLogAlert(
 export function summarizeActivityLogCondition(
   resource: AzureActivityLogAlertResource,
 ): string {
-  const conditions = resource.properties.condition?.allOf;
+  const conditions = resource.condition?.allOf;
   if (!conditions || conditions.length === 0) {
     return 'No conditions defined';
   }
@@ -146,9 +149,6 @@ export function summarizeActivityLogCondition(
       if (c.field && c.equals) {
         return `${c.field} == ${c.equals}`;
       }
-      if (c.field && c.containsAny) {
-        return `${c.field} in [${c.containsAny.join(', ')}]`;
-      }
       return c.field ?? 'unknown condition';
     })
     .join(' AND ');
@@ -157,66 +157,61 @@ export function summarizeActivityLogCondition(
 // ── Scheduled Query Rules ───────────────────────────────────
 
 /**
- * Map an Azure scheduled query rule resource to an AlertDefinition.
+ * Map an Azure scheduled query rule (LogSearchRuleResource in SDK v7)
+ * to an AlertDefinition.
  */
 export function mapScheduledQueryRule(
   resource: AzureScheduledQueryRuleResource,
 ): AlertDefinition {
   const source = 'azure-scheduled-query-rule';
-  const sourceId = resource.id;
+  const sourceId = resource.id ?? '';
   const raw = resource as unknown as Record<string, unknown>;
 
-  const actionGroupIds = resource.properties.actions?.actionGroups ?? [];
+  const actionGroupIds = resource.action?.aznsAction?.actionGroup ?? [];
 
   return {
     id: generateAlertId(source, sourceId),
     version: 0,
     source,
     sourceId,
-    name: resource.properties.displayName ?? resource.name,
-    description: resource.properties.description ?? '',
-    enabled: resource.properties.enabled ?? true,
-    severity: mapSeverity(resource.properties.severity),
+    name: resource.displayName ?? resource.name ?? '',
+    description: resource.description ?? '',
+    enabled: resource.enabled === 'true' || resource.enabled === 'True',
+    severity: mapSeverity(resource.action?.severity),
     conditionSummary: summarizeScheduledQueryCriteria(resource),
     notificationTargets: extractActionGroupNames(actionGroupIds),
     tags: resource.tags ?? {},
     owner: '',
     rawConfig: raw,
     configHash: hashConfig(raw),
-    lastModifiedAt: resource.systemData?.lastModifiedAt ?? null,
+    lastModifiedAt: resource.lastUpdatedTime?.toISOString() ?? null,
     discoveredAt: new Date().toISOString(),
   };
 }
 
 /**
- * Build condition summary from scheduled query rule criteria.
+ * Build condition summary from scheduled query rule source + trigger.
  */
 export function summarizeScheduledQueryCriteria(
   resource: AzureScheduledQueryRuleResource,
 ): string {
-  const criteria = resource.properties.criteria;
-  if (!criteria?.allOf || criteria.allOf.length === 0) {
-    return 'No criteria defined';
+  const parts: string[] = [];
+
+  if (resource.source?.query) {
+    const shortQuery = resource.source.query.length > 80
+      ? resource.source.query.slice(0, 77) + '...'
+      : resource.source.query;
+    parts.push(`query: "${shortQuery}"`);
   }
 
-  return criteria.allOf
-    .map((c) => {
-      const parts: string[] = [];
-      if (c.query) {
-        const shortQuery = c.query.length > 80 ? c.query.slice(0, 77) + '...' : c.query;
-        parts.push(`query: "${shortQuery}"`);
-      }
-      if (c.timeAggregation) parts.push(c.timeAggregation);
-      if (c.metricMeasureColumn) parts.push(`column: ${c.metricMeasureColumn}`);
-      if (c.operator && c.threshold !== undefined) {
-        parts.push(`${c.operator} ${c.threshold}`);
-      }
-      if (c.failingPeriods) {
-        parts.push(
-          `failing ${c.failingPeriods.minFailingPeriodsToAlert}/${c.failingPeriods.numberOfEvaluationPeriods}`,
-        );
-      }
-      return parts.join(' ') || 'unknown criterion';
-    })
-    .join(' AND ');
+  const trigger = resource.action?.trigger;
+  if (trigger?.thresholdOperator && trigger.threshold !== undefined) {
+    parts.push(`${trigger.thresholdOperator} ${trigger.threshold}`);
+  }
+
+  if (resource.schedule) {
+    parts.push(`every ${resource.schedule.frequencyInMinutes}min, window ${resource.schedule.timeWindowInMinutes}min`);
+  }
+
+  return parts.join(' ') || 'No criteria defined';
 }

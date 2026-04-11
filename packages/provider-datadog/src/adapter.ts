@@ -11,6 +11,7 @@ import { datadogConfigSchema } from './schema.js';
  */
 export class DatadogAdapter implements ProviderAdapter {
   readonly name = 'datadog';
+  readonly sources = ['datadog'] as const;
 
   private apiClient = new DatadogApiClient();
 

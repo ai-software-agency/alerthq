@@ -12,6 +12,7 @@ import { mapAlertPolicyToAlertDefinition } from './mapper.js';
  */
 export class GcpMonitoringAdapter implements ProviderAdapter {
   readonly name = 'gcp-monitoring';
+  readonly sources = ['gcp-monitoring'] as const;
 
   private apiClient = new GcpMonitoringApiClient();
 

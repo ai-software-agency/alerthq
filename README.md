@@ -69,20 +69,22 @@ npx alerthq list
 
 ## Commands
 
-| Command    | Description                                     |
-| ---------- | ----------------------------------------------- |
-| `init`     | Interactive setup — generate alerthq.config.yml |
-| `test`     | Test connections to storage and all providers   |
-| `sync`     | Sync alert definitions from providers           |
-| `list`     | List alert definitions with filters             |
-| `show`     | Show detailed information for a single alert    |
-| `diff`     | Show differences between two sync versions      |
-| `versions` | List sync history                               |
-| `add`      | Add a manual alert definition                   |
-| `remove`   | Remove a manual alert definition                |
-| `tag`      | Set or remove an overlay tag on an alert        |
-| `export`   | Export alerts to CSV or JSON                    |
-| `stats`    | Show summary statistics for alerts              |
+| Command | Description |
+|---------|-------------|
+| `init` | Interactive setup — generate alerthq.config.yml |
+| `test` | Test connections to storage and all providers |
+| `sync` | Sync alert definitions from providers |
+| `list` | List alert definitions with filters |
+| `show` | Show detailed information for a single alert |
+| `diff` | Show differences between two sync versions |
+| `versions` | List sync history |
+| `add` | Add a manual alert definition |
+| `remove` | Remove a manual alert definition |
+| `tag` | Set or remove an overlay tag on an alert |
+| `export` | Export alerts to CSV or JSON |
+| `stats` | Show summary statistics for alerts |
+| `enable` | Enable a provider in alerthq.config.yml |
+| `disable` | Disable a provider in alerthq.config.yml |
 
 ## Configuration Reference
 

@@ -14,6 +14,8 @@ import { registerRemove } from './commands/remove.js';
 import { registerTag } from './commands/tag.js';
 import { registerExport } from './commands/export.js';
 import { registerStats } from './commands/stats.js';
+import { registerEnable } from './commands/enable.js';
+import { registerDisable } from './commands/disable.js';
 
 // Handle --llm-help before commander parses
 if (process.argv.includes('--llm-help')) {
@@ -41,6 +43,8 @@ const registrations: Record<string, (program: Command) => void> = {
   tag: registerTag,
   export: registerExport,
   stats: registerStats,
+  enable: registerEnable,
+  disable: registerDisable,
 };
 
 // Register all commands — descriptions come from canonical data

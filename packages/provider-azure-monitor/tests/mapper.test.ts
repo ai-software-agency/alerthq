@@ -22,21 +22,31 @@ const metricFixture1: AzureMetricAlertResource = {
   type: 'Microsoft.Insights/metricAlerts',
   location: 'global',
   tags: { environment: 'production', team: 'platform' },
-  description: 'Alert when CPU exceeds 90%',
-  severity: 0,
-  enabled: true,
-  scopes: ['/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Compute/virtualMachines/vm-web-01'],
-  criteria: {
-    odataType: 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria',
-    allOf: [
+  properties: {
+    description: 'Alert when CPU exceeds 90%',
+    severity: 0,
+    enabled: true,
+    scopes: [
+      '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Compute/virtualMachines/vm-web-01',
+    ],
+    criteria: {
+      'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria',
+      allOf: [
+        {
+          name: 'cpu-check',
+          metricName: 'Percentage CPU',
+          metricNamespace: 'Microsoft.Compute/virtualMachines',
+          operator: 'GreaterThan',
+          threshold: 90,
+          timeAggregation: 'Average',
+          criterionType: 'StaticThresholdCriterion',
+        },
+      ],
+    },
+    actions: [
       {
-        name: 'cpu-check',
-        metricName: 'Percentage CPU',
-        metricNamespace: 'Microsoft.Compute/virtualMachines',
-        operator: 'GreaterThan',
-        threshold: 90,
-        timeAggregation: 'Average',
-        criterionType: 'StaticThresholdCriterion',
+        actionGroupId:
+          '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team',
       },
     ],
   },
@@ -54,18 +64,29 @@ const metricFixture2: AzureMetricAlertResource = {
   type: 'Microsoft.Insights/metricAlerts',
   location: 'global',
   tags: {},
-  description: 'Available memory below 500MB',
-  severity: 2,
-  enabled: false,
-  scopes: [],
-  criteria: {
-    allOf: [
+  properties: {
+    description: 'Available memory below 500MB',
+    severity: 2,
+    enabled: false,
+    criteria: {
+      allOf: [
+        {
+          metricName: 'Available Memory Bytes',
+          metricNamespace: 'Microsoft.Compute/virtualMachines',
+          operator: 'LessThan',
+          threshold: 524288000,
+          timeAggregation: 'Average',
+        },
+      ],
+    },
+    actions: [
       {
-        metricName: 'Available Memory Bytes',
-        metricNamespace: 'Microsoft.Compute/virtualMachines',
-        operator: 'LessThan',
-        threshold: 524288000,
-        timeAggregation: 'Average',
+        actionGroupId:
+          '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/devs',
+      },
+      {
+        actionGroupId:
+          '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team',
       },
     ],
   },
@@ -86,14 +107,24 @@ const activityLogFixture1: AzureActivityLogAlertResource = {
   type: 'Microsoft.Insights/activityLogAlerts',
   location: 'global',
   tags: { purpose: 'health-monitoring' },
-  description: 'Alert on Azure service health incidents',
-  enabled: true,
-  scopes: ['/subscriptions/sub-001'],
-  condition: {
-    allOf: [
-      { field: 'category', equals: 'ServiceHealth' },
-      { field: 'properties.incidentType', equals: 'Incident' },
-    ],
+  properties: {
+    description: 'Alert on Azure service health incidents',
+    enabled: true,
+    scopes: ['/subscriptions/sub-001'],
+    condition: {
+      allOf: [
+        { field: 'category', equals: 'ServiceHealth' },
+        { field: 'properties.incidentType', equals: 'Incident' },
+      ],
+    },
+    actions: {
+      actionGroups: [
+        {
+          actionGroupId:
+            '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/infra-team',
+        },
+      ],
+    },
   },
   actions: {
     actionGroups: [
@@ -107,19 +138,25 @@ const activityLogFixture2: AzureActivityLogAlertResource = {
   name: 'vm-delete-alert',
   type: 'Microsoft.Insights/activityLogAlerts',
   location: 'global',
-  description: 'Alert on VM deletion',
-  enabled: true,
-  scopes: ['/subscriptions/sub-001'],
-  condition: {
-    allOf: [
-      { field: 'category', equals: 'Administrative' },
-      { field: 'operationName', equals: 'Microsoft.Compute/virtualMachines/delete' },
-    ],
-  },
-  actions: {
-    actionGroups: [
-      { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/security-team' },
-    ],
+  properties: {
+    description: 'Alert on VM deletion',
+    enabled: true,
+    scopes: ['/subscriptions/sub-001'],
+    condition: {
+      allOf: [
+        { field: 'category', equals: 'Administrative' },
+        { field: 'operationName', equals: 'Microsoft.Compute/virtualMachines/delete' },
+        { field: 'status', containsAny: ['Succeeded', 'Failed'] },
+      ],
+    },
+    actions: {
+      actionGroups: [
+        {
+          actionGroupId:
+            '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/security-team',
+        },
+      ],
+    },
   },
 };
 
@@ -134,22 +171,31 @@ const queryRuleFixture1: AzureScheduledQueryRuleResource = {
   type: 'Microsoft.Insights/scheduledQueryRules',
   location: 'eastus',
   tags: { app: 'web-api' },
-  displayName: 'High Error Rate',
-  description: 'Alert when error rate exceeds 5%',
-  enabled: 'true',
-  source: {
-    query: 'requests | where resultCode >= 500 | summarize errorCount = count() by bin(timestamp, 5m)',
-    dataSourceId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.OperationalInsights/workspaces/logs-ws',
-  },
-  schedule: {
-    frequencyInMinutes: 5,
-    timeWindowInMinutes: 20,
-  },
-  action: {
-    odataType: ALERTING_ACTION_ODATA,
-    severity: '1',
-    aznsAction: {
-      actionGroup: [
+  properties: {
+    displayName: 'High Error Rate',
+    description: 'Alert when error rate exceeds 5%',
+    severity: 1,
+    enabled: true,
+    scopes: [
+      '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.OperationalInsights/workspaces/logs-ws',
+    ],
+    criteria: {
+      allOf: [
+        {
+          query:
+            'requests | where resultCode >= 500 | summarize errorCount = count() by bin(timestamp, 5m)',
+          timeAggregation: 'Count',
+          operator: 'GreaterThan',
+          threshold: 50,
+          failingPeriods: {
+            numberOfEvaluationPeriods: 4,
+            minFailingPeriodsToAlert: 3,
+          },
+        },
+      ],
+    },
+    actions: {
+      actionGroups: [
         '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/dev-team',
       ],
     },
@@ -279,7 +325,10 @@ describe('mapActivityLogAlert', () => {
     const alert = mapActivityLogAlert(activityLogFixture2);
     expect(alert.name).toBe('vm-delete-alert');
     expect(alert.conditionSummary).toContain('category == Administrative');
-    expect(alert.conditionSummary).toContain('operationName == Microsoft.Compute/virtualMachines/delete');
+    expect(alert.conditionSummary).toContain(
+      'operationName == Microsoft.Compute/virtualMachines/delete',
+    );
+    expect(alert.conditionSummary).toContain('status in [Succeeded, Failed]');
     expect(alert.notificationTargets).toContain('actionGroup:security-team');
     expect(alert.lastModifiedAt).toBeNull();
   });

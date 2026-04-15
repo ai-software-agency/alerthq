@@ -15,19 +15,23 @@ export class ElasticProviderAdapter implements ProviderAdapter {
   readonly name = 'elastic';
   readonly sources = ['elastic-watcher', 'elastic-kibana'] as const;
 
-  private client!: Client;
+  private client: Client | undefined;
   private config!: ElasticProviderConfig;
 
   async initialize(config: Record<string, unknown>): Promise<void> {
     this.config = this.validateConfig(config);
-    this.client = this.createClient(this.config);
+    if (this.config.url) {
+      this.client = this.createClient(this.config);
+    }
   }
 
   async fetchAlerts(): Promise<AlertDefinition[]> {
     const alerts: AlertDefinition[] = [];
 
-    const watchers = await this.fetchWatchers();
-    alerts.push(...watchers);
+    if (this.client) {
+      const watchers = await this.fetchWatchers();
+      alerts.push(...watchers);
+    }
 
     if (this.config.kibanaUrl) {
       const kibanaRules = await this.fetchKibanaRules();
@@ -39,16 +43,29 @@ export class ElasticProviderAdapter implements ProviderAdapter {
   }
 
   async testConnection(): Promise<boolean> {
-    try {
-      const resp = await this.client.ping();
-      const esOk = resp === true || (resp as unknown as { statusCode: number }).statusCode === 200;
-      if (!esOk) return false;
-    } catch {
-      return false;
+    if (this.client) {
+      try {
+        logger.debug(`[elastic] Pinging Elasticsearch at ${this.config.url}`);
+        const resp = await this.client.ping();
+        const esOk =
+          resp === true || (resp as unknown as { statusCode: number }).statusCode === 200;
+        if (!esOk) {
+          logger.debug(
+            `[elastic] Elasticsearch ping returned non-OK response: ${JSON.stringify(resp)}`,
+          );
+          return false;
+        }
+      } catch (err) {
+        logger.debug(
+          `[elastic] Elasticsearch ping failed at ${this.config.url}: ${(err as Error).message ?? String(err)}`,
+        );
+        return false;
+      }
     }
 
     if (this.config.kibanaUrl) {
       try {
+        logger.debug(`[elastic] Checking Kibana alerting API at ${this.config.kibanaUrl}`);
         const headers: Record<string, string> = { 'kbn-xsrf': 'true' };
         if (this.config.auth.type === 'basic') {
           const cred = Buffer.from(
@@ -58,9 +75,17 @@ export class ElasticProviderAdapter implements ProviderAdapter {
         } else {
           headers['Authorization'] = `ApiKey ${this.config.auth.apiKey}`;
         }
-        const resp = await fetch(`${this.config.kibanaUrl}/api/status`, { headers });
-        if (!resp.ok) return false;
-      } catch {
+        const url = `${this.config.kibanaUrl}/api/alerting/rules/_find?page=1&per_page=1`;
+        const resp = await fetch(url, { headers });
+        if (!resp.ok) {
+          const body = await resp.text().catch(() => '');
+          logger.debug(
+            `[elastic] Kibana alerting API failed: ${resp.status} ${resp.statusText} — ${body}`,
+          );
+          return false;
+        }
+      } catch (err) {
+        logger.debug(`[elastic] Kibana connection failed: ${String(err)}`);
         return false;
       }
     }
@@ -69,14 +94,26 @@ export class ElasticProviderAdapter implements ProviderAdapter {
   }
 
   async dispose(): Promise<void> {
-    await this.client.close();
+    if (this.client) {
+      await this.client.close();
+    }
   }
 
   // ── private ────────────────────────────────────────────────
 
   private validateConfig(config: Record<string, unknown>): ElasticProviderConfig {
-    if (!config.url || typeof config.url !== 'string') {
-      throw new Error('[elastic] config.url is required and must be a string');
+    const hasUrl = config.url && typeof config.url === 'string';
+    const hasKibanaUrl = config.kibanaUrl && typeof config.kibanaUrl === 'string';
+
+    if (!hasUrl && !hasKibanaUrl) {
+      throw new Error('[elastic] at least one of config.url or config.kibanaUrl is required');
+    }
+
+    if (config.url && typeof config.url !== 'string') {
+      throw new Error('[elastic] config.url must be a string');
+    }
+    if (config.kibanaUrl && typeof config.kibanaUrl !== 'string') {
+      throw new Error('[elastic] config.kibanaUrl must be a string');
     }
 
     if (!config.auth || typeof config.auth !== 'object') {
@@ -98,8 +135,8 @@ export class ElasticProviderAdapter implements ProviderAdapter {
     }
 
     return {
-      url: config.url as string,
-      kibanaUrl: config.kibanaUrl as string | undefined,
+      url: hasUrl ? (config.url as string) : undefined,
+      kibanaUrl: hasKibanaUrl ? (config.kibanaUrl as string) : undefined,
       auth: auth as ElasticProviderConfig['auth'],
       watcherPageSize:
         typeof config.watcherPageSize === 'number'
@@ -119,7 +156,7 @@ export class ElasticProviderAdapter implements ProviderAdapter {
         : { apiKey: config.auth.apiKey };
 
     return new Client({
-      node: config.url,
+      node: config.url!,
       auth,
     });
   }
@@ -131,7 +168,7 @@ export class ElasticProviderAdapter implements ProviderAdapter {
 
     while (true) {
       const body = await withRetry(async () => {
-        const resp = await this.client.transport.request({
+        const resp = await this.client!.transport.request({
           method: 'POST',
           path: '/_watcher/_query/watches',
           body: { from, size: pageSize },
@@ -177,7 +214,7 @@ export class ElasticProviderAdapter implements ProviderAdapter {
       const body = await withRetry(async () => {
         const resp = await fetch(url, { headers });
         if (!resp.ok) {
-          throw new Error(`Kibana API error: ${resp.status} ${resp.statusText}`);
+          throw new Error(`[elastic] Kibana API error: ${resp.status} ${resp.statusText}`);
         }
         return (await resp.json()) as KibanaRulesFindResponse;
       });

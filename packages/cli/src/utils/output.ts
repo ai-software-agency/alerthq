@@ -34,14 +34,7 @@ export async function withContext(fn: (ctx: Context) => Promise<void>): Promise<
 }
 
 /** Standard columns for the alert list table. */
-export const ALERT_LIST_COLUMNS = [
-  'id',
-  'source',
-  'name',
-  'severity',
-  'enabled',
-  'owner',
-] as const;
+export const ALERT_LIST_COLUMNS = ['id', 'source', 'name', 'severity', 'enabled', 'owner'] as const;
 
 /** Standard columns for the sync run (versions) table. */
 export const VERSION_COLUMNS = [
@@ -53,17 +46,7 @@ export const VERSION_COLUMNS = [
 ] as const;
 
 /** Standard columns for the diff table. */
-export const DIFF_COLUMNS = [
-  'change',
-  'id',
-  'name',
-  'source',
-  'severity',
-] as const;
+export const DIFF_COLUMNS = ['change', 'id', 'name', 'source', 'severity'] as const;
 
 /** Standard columns for the connection test table. */
-export const CONNECTION_TEST_COLUMNS = [
-  'name',
-  'status',
-  'error',
-] as const;
+export const CONNECTION_TEST_COLUMNS = ['name', 'status', 'error'] as const;

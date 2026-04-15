@@ -33,6 +33,7 @@ export type { Logger, LogLevel } from './utils/logger.js';
 // Config & plugin loaders (for advanced use / testing)
 export { loadConfig, resolveEnvVars } from './loader/config-loader.js';
 export { loadStoragePlugin, loadProviderPlugins } from './loader/plugin-loader.js';
+export type { PluginImportFn } from './loader/plugin-loader.js';
 
 // Validation schema
 export { alerthqConfigSchema } from './validation/config-schema.js';

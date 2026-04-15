@@ -87,9 +87,7 @@ class PostgresStorageProvider implements StorageProvider {
       );
     `);
 
-    const { rows } = await this.pool.query<{ version: number }>(
-      'SELECT version FROM _migrations',
-    );
+    const { rows } = await this.pool.query<{ version: number }>('SELECT version FROM _migrations');
     const applied = new Set(rows.map((r) => r.version));
 
     for (const migration of MIGRATIONS) {
@@ -98,10 +96,9 @@ class PostgresStorageProvider implements StorageProvider {
         try {
           await client.query('BEGIN');
           await client.query(migration.sql);
-          await client.query(
-            'INSERT INTO _migrations (version, applied_at) VALUES ($1, NOW())',
-            [migration.version],
-          );
+          await client.query('INSERT INTO _migrations (version, applied_at) VALUES ($1, NOW())', [
+            migration.version,
+          ]);
           await client.query('COMMIT');
         } catch (err) {
           await client.query('ROLLBACK');
@@ -119,13 +116,7 @@ class PostgresStorageProvider implements StorageProvider {
     await this.pool.query(
       `INSERT INTO sync_runs OVERRIDING SYSTEM VALUE
        VALUES ($1, $2, $3, $4, $5)`,
-      [
-        run.version,
-        run.name,
-        run.description,
-        run.createdAt,
-        JSON.stringify(run.providerStatus),
-      ],
+      [run.version, run.name, run.description, run.createdAt, JSON.stringify(run.providerStatus)],
     );
   }
 
@@ -414,18 +405,13 @@ interface RawAlertPrefixed {
 
 function toSyncRun(row: RawSyncRun): SyncRun {
   const providerStatus =
-    typeof row.provider_status === 'string'
-      ? JSON.parse(row.provider_status)
-      : row.provider_status;
+    typeof row.provider_status === 'string' ? JSON.parse(row.provider_status) : row.provider_status;
   const createdAtRaw: unknown = row.created_at;
   return {
     version: row.version,
     name: row.name,
     description: row.description,
-    createdAt:
-      createdAtRaw instanceof Date
-        ? createdAtRaw.toISOString()
-        : String(row.created_at),
+    createdAt: createdAtRaw instanceof Date ? createdAtRaw.toISOString() : String(row.created_at),
     providerStatus,
   };
 }
@@ -435,23 +421,16 @@ function toAlert(row: RawAlert): AlertDefinition {
     typeof row.notification_targets === 'string'
       ? JSON.parse(row.notification_targets)
       : row.notification_targets;
-  const tags =
-    typeof row.tags === 'string' ? JSON.parse(row.tags) : row.tags;
+  const tags = typeof row.tags === 'string' ? JSON.parse(row.tags) : row.tags;
   const rawConfig =
-    typeof row.raw_config === 'string'
-      ? JSON.parse(row.raw_config)
-      : row.raw_config;
+    typeof row.raw_config === 'string' ? JSON.parse(row.raw_config) : row.raw_config;
 
   const lastModifiedAtRaw: unknown = row.last_modified_at;
   const lastModifiedAt =
-    lastModifiedAtRaw instanceof Date
-      ? lastModifiedAtRaw.toISOString()
-      : row.last_modified_at;
+    lastModifiedAtRaw instanceof Date ? lastModifiedAtRaw.toISOString() : row.last_modified_at;
   const discoveredAtRaw: unknown = row.discovered_at;
   const discoveredAt =
-    discoveredAtRaw instanceof Date
-      ? discoveredAtRaw.toISOString()
-      : String(row.discovered_at);
+    discoveredAtRaw instanceof Date ? discoveredAtRaw.toISOString() : String(row.discovered_at);
 
   return {
     id: row.id,

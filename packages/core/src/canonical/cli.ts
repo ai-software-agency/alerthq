@@ -28,9 +28,13 @@ export const CLI_COMMANDS: readonly CliCommand[] = [
   },
   {
     name: 'test',
-    usage: 'test',
+    usage: 'test [options]',
     description: 'Test connections to storage and all providers',
-    examples: ['alerthq test'],
+    options: [
+      { flags: '--provider <name>', description: 'Test only a specific provider' },
+      { flags: '--verbose', description: 'Show debug-level logs during connection tests' },
+    ],
+    examples: ['alerthq test', 'alerthq test --provider elastic', 'alerthq test --verbose'],
   },
   {
     name: 'sync',
@@ -58,7 +62,11 @@ export const CLI_COMMANDS: readonly CliCommand[] = [
       { flags: '--owner <name>', description: 'Filter by owner' },
       { flags: '--enabled', description: 'Show only enabled alerts' },
       { flags: '--disabled', description: 'Show only disabled alerts' },
-      { flags: '--format <fmt>', description: 'Output format: table, json, csv', defaultValue: 'table' },
+      {
+        flags: '--format <fmt>',
+        description: 'Output format: table, json, csv',
+        defaultValue: 'table',
+      },
     ],
     examples: [
       'alerthq list',
@@ -71,10 +79,7 @@ export const CLI_COMMANDS: readonly CliCommand[] = [
     name: 'show',
     usage: 'show <id>',
     description: 'Show detailed information for a single alert',
-    examples: [
-      'alerthq show abc123',
-      'alerthq show abc  # prefix match',
-    ],
+    examples: ['alerthq show abc123', 'alerthq show abc  # prefix match'],
   },
   {
     name: 'diff',
@@ -85,22 +90,20 @@ export const CLI_COMMANDS: readonly CliCommand[] = [
       { flags: '--to <version>', description: 'Target version number' },
       { flags: '--format <fmt>', description: 'Output format: table, json', defaultValue: 'table' },
     ],
-    examples: [
-      'alerthq diff',
-      'alerthq diff --from 1 --to 3',
-    ],
+    examples: ['alerthq diff', 'alerthq diff --from 1 --to 3'],
   },
   {
     name: 'versions',
     usage: 'versions [options]',
     description: 'List sync history',
     options: [
-      { flags: '--limit <n>', description: 'Maximum number of versions to show', defaultValue: '20' },
+      {
+        flags: '--limit <n>',
+        description: 'Maximum number of versions to show',
+        defaultValue: '20',
+      },
     ],
-    examples: [
-      'alerthq versions',
-      'alerthq versions --limit 5',
-    ],
+    examples: ['alerthq versions', 'alerthq versions --limit 5'],
   },
   {
     name: 'add',
@@ -127,9 +130,7 @@ export const CLI_COMMANDS: readonly CliCommand[] = [
     name: 'tag',
     usage: 'tag <id> <key=value>',
     description: 'Set or remove an overlay tag on an alert',
-    options: [
-      { flags: '--remove', description: 'Remove the tag key instead of setting it' },
-    ],
+    options: [{ flags: '--remove', description: 'Remove the tag key instead of setting it' }],
     examples: [
       'alerthq tag abc123 env=production',
       'alerthq tag abc team=backend',

@@ -8,11 +8,7 @@ import type {
   AzureActivityLogAlertResource,
   AzureScheduledQueryRuleResource,
 } from './types.js';
-import {
-  mapMetricAlert,
-  mapActivityLogAlert,
-  mapScheduledQueryRule,
-} from './mapper.js';
+import { mapMetricAlert, mapActivityLogAlert, mapScheduledQueryRule } from './mapper.js';
 
 export class AzureMonitorProviderAdapter implements ProviderAdapter {
   readonly name = 'azure-monitor';
@@ -44,14 +40,17 @@ export class AzureMonitorProviderAdapter implements ProviderAdapter {
   async testConnection(): Promise<boolean> {
     try {
       const subscriptionId = this.config.subscriptionIds[0];
-      if (!subscriptionId) return false;
+      if (!subscriptionId) {
+        logger.debug('[azure-monitor] No subscription IDs configured');
+        return false;
+      }
 
       const client = new MonitorClient(this.credential, subscriptionId);
-      // Try listing metric alerts with a small page to verify access
       const iter = client.metricAlerts.listBySubscription();
       await iter.next();
       return true;
-    } catch {
+    } catch (err) {
+      logger.debug(`[azure-monitor] Connection test failed: ${String(err)}`);
       return false;
     }
   }

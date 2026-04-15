@@ -205,9 +205,11 @@ describe('extractNotificationTargets', () => {
   });
 
   it('extracts multiple mentions', () => {
-    expect(
-      extractNotificationTargets('@slack-alerts @pagerduty-oncall @ops@example.com'),
-    ).toEqual(['@slack-alerts', '@pagerduty-oncall', '@ops@example.com']);
+    expect(extractNotificationTargets('@slack-alerts @pagerduty-oncall @ops@example.com')).toEqual([
+      '@slack-alerts',
+      '@pagerduty-oncall',
+      '@ops@example.com',
+    ]);
   });
 
   it('returns empty array for empty message', () => {

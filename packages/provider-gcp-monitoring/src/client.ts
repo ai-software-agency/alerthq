@@ -85,7 +85,8 @@ export class GcpMonitoringApiClient {
         pageSize: 1,
       });
       return true;
-    } catch {
+    } catch (err) {
+      logger.debug(`[gcp-monitoring] Connection test failed: ${String(err)}`);
       return false;
     }
   }

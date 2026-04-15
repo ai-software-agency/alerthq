@@ -18,8 +18,8 @@ describe('AzureMonitorProviderAdapter.initialize', () => {
 
   it('throws when a subscriptionId is not a string', async () => {
     const adapter = new AzureMonitorProviderAdapter();
-    await expect(
-      adapter.initialize({ subscriptionIds: [123] }),
-    ).rejects.toThrow('each subscriptionId must be a string');
+    await expect(adapter.initialize({ subscriptionIds: [123] })).rejects.toThrow(
+      'each subscriptionId must be a string',
+    );
   });
 });

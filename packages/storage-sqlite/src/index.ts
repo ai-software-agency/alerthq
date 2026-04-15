@@ -118,9 +118,9 @@ class SqliteStorageProvider implements StorageProvider {
   }
 
   async getSyncRun(version: number): Promise<SyncRun | null> {
-    const row = this.db
-      .prepare('SELECT * FROM sync_runs WHERE version = ?')
-      .get(version) as RawSyncRun | undefined;
+    const row = this.db.prepare('SELECT * FROM sync_runs WHERE version = ?').get(version) as
+      | RawSyncRun
+      | undefined;
     return row ? toSyncRun(row) : null;
   }
 
@@ -291,9 +291,7 @@ class SqliteStorageProvider implements StorageProvider {
 
   async setOverlayTag(alertId: string, key: string, value: string): Promise<void> {
     this.db
-      .prepare(
-        'INSERT OR REPLACE INTO overlay_tags (alert_id, key, value) VALUES (?, ?, ?)',
-      )
+      .prepare('INSERT OR REPLACE INTO overlay_tags (alert_id, key, value) VALUES (?, ?, ?)')
       .run(alertId, key, value);
   }
 

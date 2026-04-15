@@ -49,11 +49,7 @@ function makeStorage(overrides: Partial<StorageProvider> = {}): StorageProvider 
   };
 }
 
-function makeProvider(
-  name: string,
-  alerts: AlertDefinition[] = [],
-  sources?: readonly string[],
-): ProviderAdapter {
+function makeProvider(name: string, alerts: AlertDefinition[] = []): ProviderAdapter {
   return {
     name,
     sources: sources ?? [name],

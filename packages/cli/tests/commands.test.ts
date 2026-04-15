@@ -13,6 +13,8 @@ import { registerRemove } from '../src/commands/remove.js';
 import { registerTag } from '../src/commands/tag.js';
 import { registerExport } from '../src/commands/export.js';
 import { registerStats } from '../src/commands/stats.js';
+import { registerEnable } from '../src/commands/enable.js';
+import { registerDisable } from '../src/commands/disable.js';
 
 const registrations: Record<string, (program: Command) => void> = {
   init: registerInit,
@@ -27,10 +29,12 @@ const registrations: Record<string, (program: Command) => void> = {
   tag: registerTag,
   export: registerExport,
   stats: registerStats,
+  enable: registerEnable,
+  disable: registerDisable,
 };
 
 describe('CLI command registration', () => {
-  it('registers all 12 commands without error', () => {
+  it('registers all 14 commands without error', () => {
     const program = new Command();
     program.exitOverride();
 

@@ -158,4 +158,22 @@ export const CLI_COMMANDS: readonly CliCommand[] = [
     description: 'Show summary statistics for alerts',
     examples: ['alerthq stats'],
   },
+  {
+    name: 'enable',
+    usage: 'enable <provider>',
+    description: 'Enable a provider in alerthq.config.yml',
+    examples: [
+      'alerthq enable elastic',
+      'alerthq enable datadog',
+    ],
+  },
+  {
+    name: 'disable',
+    usage: 'disable <provider>',
+    description: 'Disable a provider in alerthq.config.yml',
+    examples: [
+      'alerthq disable grafana',
+      'alerthq disable aws-cloudwatch',
+    ],
+  },
 ] as const;

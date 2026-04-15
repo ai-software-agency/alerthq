@@ -83,6 +83,8 @@ npx alerthq list
 | `tag` | Set or remove an overlay tag on an alert |
 | `export` | Export alerts to CSV or JSON |
 | `stats` | Show summary statistics for alerts |
+| `enable` | Enable a provider in alerthq.config.yml |
+| `disable` | Disable a provider in alerthq.config.yml |
 
 ## Configuration Reference
 

@@ -44,7 +44,8 @@
   },
   "dependencies": {
     "@alerthq/core": "workspace:*",
-    "commander": "^13.0.0"
+    "commander": "^13.0.0",
+    "yaml": "^2.6.0"
   },
   "peerDependencies": {
     "@alerthq/storage-sqlite": "workspace:*",

@@ -45,7 +45,7 @@
   "dependencies": {
     "@alerthq/core": "workspace:*",
     "commander": "^13.0.0",
-    "dotenv": "^16.4.0"
+    "dotenv": "^17.4.2"
   },
   "peerDependencies": {
     "@alerthq/storage-sqlite": "workspace:*",

@@ -51,9 +51,7 @@ export function buildConditionSummary(config: AtlasAlertConfig): string {
 
   if (config.metricThreshold) {
     const mt = config.metricThreshold;
-    parts.push(
-      `${mt.metricName} ${mt.operator} ${mt.threshold}${mt.units ? ' ' + mt.units : ''}`,
-    );
+    parts.push(`${mt.metricName} ${mt.operator} ${mt.threshold}${mt.units ? ' ' + mt.units : ''}`);
     if (mt.mode) {
       parts.push(`mode: ${mt.mode}`);
     }
@@ -61,9 +59,7 @@ export function buildConditionSummary(config: AtlasAlertConfig): string {
 
   if (config.threshold) {
     const t = config.threshold;
-    parts.push(
-      `${t.operator} ${t.threshold}${t.units ? ' ' + t.units : ''}`,
-    );
+    parts.push(`${t.operator} ${t.threshold}${t.units ? ' ' + t.units : ''}`);
   }
 
   if (config.matchers && config.matchers.length > 0) {

@@ -24,9 +24,7 @@ describe('withRetry', () => {
   it('throws the last error after exhausting retries', async () => {
     const fn = vi.fn().mockRejectedValue(new Error('persistent failure'));
 
-    await expect(withRetry(fn, { retries: 2, baseDelay: 1 })).rejects.toThrow(
-      'persistent failure',
-    );
+    await expect(withRetry(fn, { retries: 2, baseDelay: 1 })).rejects.toThrow('persistent failure');
     expect(fn).toHaveBeenCalledTimes(3); // initial + 2 retries
   });
 
@@ -77,10 +75,7 @@ describe('withRetry', () => {
   });
 
   it('retries when isRetryable returns true', async () => {
-    const fn = vi
-      .fn()
-      .mockRejectedValueOnce(new Error('transient'))
-      .mockResolvedValue('ok');
+    const fn = vi.fn().mockRejectedValueOnce(new Error('transient')).mockResolvedValue('ok');
 
     const result = await withRetry(fn, {
       retries: 3,

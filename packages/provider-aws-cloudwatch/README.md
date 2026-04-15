@@ -4,8 +4,8 @@ AWS CloudWatch alert provider for [alerthq](https://github.com/edrv/alerthq).
 
 ## Supported Alert Types
 
-| Alert Type | API Source | Notes |
-|------------|-----------|-------|
+| Alert Type    | API Source                                        | Notes                                          |
+| ------------- | ------------------------------------------------- | ---------------------------------------------- |
 | Metric Alarms | `DescribeAlarms` via `@aws-sdk/client-cloudwatch` | Includes standard and anomaly detection alarms |
 
 Composite alarms are not currently fetched (they use a separate API call).
@@ -37,12 +37,12 @@ providers:
     #   sessionToken: ...
 ```
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `regions` | `string[]` | Yes | — | AWS regions to scan for alarms |
-| `credentials.accessKeyId` | `string` | No | — | AWS access key ID |
-| `credentials.secretAccessKey` | `string` | No | — | AWS secret access key |
-| `credentials.sessionToken` | `string` | No | — | AWS session token (for temporary credentials) |
+| Field                         | Type       | Required | Default | Description                                   |
+| ----------------------------- | ---------- | -------- | ------- | --------------------------------------------- |
+| `regions`                     | `string[]` | Yes      | —       | AWS regions to scan for alarms                |
+| `credentials.accessKeyId`     | `string`   | No       | —       | AWS access key ID                             |
+| `credentials.secretAccessKey` | `string`   | No       | —       | AWS secret access key                         |
+| `credentials.sessionToken`    | `string`   | No       | —       | AWS session token (for temporary credentials) |
 
 ## Required Permissions
 
@@ -54,10 +54,7 @@ Minimum IAM policy for read-only access:
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": [
-        "cloudwatch:DescribeAlarms",
-        "cloudwatch:ListTagsForResource"
-      ],
+      "Action": ["cloudwatch:DescribeAlarms", "cloudwatch:ListTagsForResource"],
       "Resource": "*"
     }
   ]
@@ -68,19 +65,19 @@ Minimum IAM policy for read-only access:
 
 ## Field Mapping
 
-| AlertDefinition Field | Source |
-|-----------------------|--------|
-| `id` | `generateAlertId('aws-cloudwatch', AlarmArn)` |
-| `sourceId` | `AlarmArn` |
-| `name` | `AlarmName` |
-| `description` | `AlarmDescription` |
-| `enabled` | Always `true` (CloudWatch alarms cannot be disabled) |
-| `severity` | From `severity` tag if present, otherwise `'warning'` |
-| `conditionSummary` | Built from `MetricName`, `ComparisonOperator`, `Threshold`, `Period`, `EvaluationPeriods` |
-| `notificationTargets` | Deduplicated union of `OKActions`, `AlarmActions`, `InsufficientDataActions` |
-| `tags` | Resource tags via `ListTagsForResource` |
-| `owner` | From `owner` tag if present |
-| `lastModifiedAt` | `AlarmConfigurationUpdatedTimestamp` |
+| AlertDefinition Field | Source                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| `id`                  | `generateAlertId('aws-cloudwatch', AlarmArn)`                                             |
+| `sourceId`            | `AlarmArn`                                                                                |
+| `name`                | `AlarmName`                                                                               |
+| `description`         | `AlarmDescription`                                                                        |
+| `enabled`             | Always `true` (CloudWatch alarms cannot be disabled)                                      |
+| `severity`            | From `severity` tag if present, otherwise `'warning'`                                     |
+| `conditionSummary`    | Built from `MetricName`, `ComparisonOperator`, `Threshold`, `Period`, `EvaluationPeriods` |
+| `notificationTargets` | Deduplicated union of `OKActions`, `AlarmActions`, `InsufficientDataActions`              |
+| `tags`                | Resource tags via `ListTagsForResource`                                                   |
+| `owner`               | From `owner` tag if present                                                               |
+| `lastModifiedAt`      | `AlarmConfigurationUpdatedTimestamp`                                                      |
 
 ## Limitations
 

@@ -110,10 +110,7 @@ export function mapAlertPolicyToAlertDefinition(
     conditionSummary: buildConditionSummary(policy.conditions, policy.combiner),
     notificationTargets,
     tags: (policy.userLabels as Record<string, string>) ?? {},
-    owner:
-      policy.mutationRecord?.mutatedBy ??
-      policy.creationRecord?.mutatedBy ??
-      '',
+    owner: policy.mutationRecord?.mutatedBy ?? policy.creationRecord?.mutatedBy ?? '',
     rawConfig,
     configHash: hashConfig(rawConfig),
     lastModifiedAt: timestampToIso(policy.mutationRecord?.mutateTime),

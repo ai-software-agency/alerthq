@@ -196,8 +196,20 @@ describe('SqliteStorageProvider', () => {
   // ---- getChanges (drift detection) ----
 
   it('detects added alerts', async () => {
-    await storage.createSyncRun({ version: 1, name: 'R1', description: '', createdAt: '2026-01-01T00:00:00Z', providerStatus: {} });
-    await storage.createSyncRun({ version: 2, name: 'R2', description: '', createdAt: '2026-01-02T00:00:00Z', providerStatus: {} });
+    await storage.createSyncRun({
+      version: 1,
+      name: 'R1',
+      description: '',
+      createdAt: '2026-01-01T00:00:00Z',
+      providerStatus: {},
+    });
+    await storage.createSyncRun({
+      version: 2,
+      name: 'R2',
+      description: '',
+      createdAt: '2026-01-02T00:00:00Z',
+      providerStatus: {},
+    });
 
     await storage.saveAlertDefinitions(1, []);
     await storage.saveAlertDefinitions(2, [makeAlert({ id: 'new111111111', version: 2 })]);
@@ -210,8 +222,20 @@ describe('SqliteStorageProvider', () => {
   });
 
   it('detects removed alerts', async () => {
-    await storage.createSyncRun({ version: 1, name: 'R1', description: '', createdAt: '2026-01-01T00:00:00Z', providerStatus: {} });
-    await storage.createSyncRun({ version: 2, name: 'R2', description: '', createdAt: '2026-01-02T00:00:00Z', providerStatus: {} });
+    await storage.createSyncRun({
+      version: 1,
+      name: 'R1',
+      description: '',
+      createdAt: '2026-01-01T00:00:00Z',
+      providerStatus: {},
+    });
+    await storage.createSyncRun({
+      version: 2,
+      name: 'R2',
+      description: '',
+      createdAt: '2026-01-02T00:00:00Z',
+      providerStatus: {},
+    });
 
     await storage.saveAlertDefinitions(1, [makeAlert({ id: 'gone11111111', version: 1 })]);
     await storage.saveAlertDefinitions(2, []);
@@ -224,8 +248,20 @@ describe('SqliteStorageProvider', () => {
   });
 
   it('detects modified alerts (different configHash)', async () => {
-    await storage.createSyncRun({ version: 1, name: 'R1', description: '', createdAt: '2026-01-01T00:00:00Z', providerStatus: {} });
-    await storage.createSyncRun({ version: 2, name: 'R2', description: '', createdAt: '2026-01-02T00:00:00Z', providerStatus: {} });
+    await storage.createSyncRun({
+      version: 1,
+      name: 'R1',
+      description: '',
+      createdAt: '2026-01-01T00:00:00Z',
+      providerStatus: {},
+    });
+    await storage.createSyncRun({
+      version: 2,
+      name: 'R2',
+      description: '',
+      createdAt: '2026-01-02T00:00:00Z',
+      providerStatus: {},
+    });
 
     await storage.saveAlertDefinitions(1, [
       makeAlert({ id: 'mod111111111', version: 1, configHash: 'hash_v1', name: 'Before' }),
@@ -243,8 +279,20 @@ describe('SqliteStorageProvider', () => {
   });
 
   it('ignores unchanged alerts (same configHash)', async () => {
-    await storage.createSyncRun({ version: 1, name: 'R1', description: '', createdAt: '2026-01-01T00:00:00Z', providerStatus: {} });
-    await storage.createSyncRun({ version: 2, name: 'R2', description: '', createdAt: '2026-01-02T00:00:00Z', providerStatus: {} });
+    await storage.createSyncRun({
+      version: 1,
+      name: 'R1',
+      description: '',
+      createdAt: '2026-01-01T00:00:00Z',
+      providerStatus: {},
+    });
+    await storage.createSyncRun({
+      version: 2,
+      name: 'R2',
+      description: '',
+      createdAt: '2026-01-02T00:00:00Z',
+      providerStatus: {},
+    });
 
     const alert = makeAlert({ id: 'same11111111', configHash: 'same_hash' });
     await storage.saveAlertDefinitions(1, [{ ...alert, version: 1 }]);
@@ -296,7 +344,13 @@ describe('SqliteStorageProvider', () => {
   // ---- Overlay tag merge at read time (integration) ----
 
   it('overlay tags merge on top of provider tags', async () => {
-    await storage.createSyncRun({ version: 1, name: 'R1', description: '', createdAt: '2026-01-01T00:00:00Z', providerStatus: {} });
+    await storage.createSyncRun({
+      version: 1,
+      name: 'R1',
+      description: '',
+      createdAt: '2026-01-01T00:00:00Z',
+      providerStatus: {},
+    });
 
     const alert = makeAlert({
       id: 'tagtest11111',

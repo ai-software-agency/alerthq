@@ -27,10 +27,7 @@ const program = new Command();
 
 const cliMeta = CLI_COMMANDS;
 
-program
-  .name(META.name)
-  .description(META.npmDescription)
-  .version('0.0.0');
+program.name(META.name).description(META.npmDescription).version('0.0.0');
 
 // Map command names to registration functions
 const registrations: Record<string, (program: Command) => void> = {

@@ -38,9 +38,7 @@ export class GcpMonitoringAdapter implements ProviderAdapter {
     const channelMap = await this.apiClient.fetchNotificationChannels();
     const policies = await this.apiClient.fetchAlertPolicies();
 
-    const alerts = policies.map((policy) =>
-      mapAlertPolicyToAlertDefinition(policy, channelMap),
-    );
+    const alerts = policies.map((policy) => mapAlertPolicyToAlertDefinition(policy, channelMap));
 
     logger.info(`[gcp-monitoring] Mapped ${alerts.length} alert definitions`);
     return alerts;

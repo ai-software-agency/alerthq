@@ -35,7 +35,7 @@ export class DigestAuthClient {
 
     const wwwAuth = initialResp.headers.get('www-authenticate');
     if (!wwwAuth) {
-      throw new Error('Atlas API returned 401 without WWW-Authenticate header');
+      throw new Error('[mongodb-atlas] Atlas API returned 401 without WWW-Authenticate header');
     }
 
     const challenge = this.parseChallenge(wwwAuth);
@@ -78,7 +78,9 @@ export class DigestAuthClient {
     }
 
     if (!parts.realm || !parts.nonce) {
-      throw new Error(`Invalid Digest challenge: missing realm or nonce in "${header}"`);
+      throw new Error(
+        `[mongodb-atlas] invalid Digest challenge: missing realm or nonce in "${header}"`,
+      );
     }
 
     return {
@@ -93,18 +95,11 @@ export class DigestAuthClient {
   /**
    * Build the Authorization header value for Digest authentication.
    */
-  buildAuthorizationHeader(
-    challenge: DigestChallenge,
-    method: string,
-    uri: string,
-  ): string {
+  buildAuthorizationHeader(challenge: DigestChallenge, method: string, uri: string): string {
     const algorithm = challenge.algorithm ?? 'MD5';
     const hashFn = algorithm.toUpperCase() === 'SHA-256' ? 'sha256' : 'md5';
 
-    const ha1 = this.hash(
-      hashFn,
-      `${this.username}:${challenge.realm}:${this.password}`,
-    );
+    const ha1 = this.hash(hashFn, `${this.username}:${challenge.realm}:${this.password}`);
     const ha2 = this.hash(hashFn, `${method}:${uri}`);
 
     this.nonceCount++;
@@ -121,10 +116,7 @@ export class DigestAuthClient {
     ];
 
     if (challenge.qop) {
-      response = this.hash(
-        hashFn,
-        `${ha1}:${challenge.nonce}:${nc}:${cnonce}:auth:${ha2}`,
-      );
+      response = this.hash(hashFn, `${ha1}:${challenge.nonce}:${nc}:${cnonce}:auth:${ha2}`);
       parts.push(`qop=auth`, `nc=${nc}`, `cnonce="${cnonce}"`);
     } else {
       response = this.hash(hashFn, `${ha1}:${challenge.nonce}:${ha2}`);

@@ -21,9 +21,7 @@ function buildConditionSummary(alarm: Record<string, unknown>): string {
 /**
  * Deduplicate and merge notification target arrays.
  */
-function deduplicateTargets(
-  ...arrays: (string[] | undefined)[]
-): string[] {
+function deduplicateTargets(...arrays: (string[] | undefined)[]): string[] {
   const set = new Set<string>();
   for (const arr of arrays) {
     if (arr) {
@@ -38,17 +36,14 @@ function deduplicateTargets(
 /**
  * Map a CloudWatch alarm (with tags) to a normalized AlertDefinition.
  */
-export function mapAlarmToAlertDefinition(
-  entry: CloudWatchAlarmWithTags,
-): AlertDefinition {
+export function mapAlarmToAlertDefinition(entry: CloudWatchAlarmWithTags): AlertDefinition {
   const { alarm, tags } = entry;
   const alarmArn = alarm.AlarmArn ?? '';
 
   const rawConfig: Record<string, unknown> = { ...alarm };
 
   const severity: Severity =
-    tags.severity &&
-    ['critical', 'warning', 'info', 'unknown'].includes(tags.severity)
+    tags.severity && ['critical', 'warning', 'info', 'unknown'].includes(tags.severity)
       ? (tags.severity as Severity)
       : 'warning';
 

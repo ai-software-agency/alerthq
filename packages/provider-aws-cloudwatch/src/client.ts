@@ -4,7 +4,7 @@ import {
   ListTagsForResourceCommand,
   type MetricAlarm,
 } from '@aws-sdk/client-cloudwatch';
-import { withRetry } from '@alerthq/core';
+import { withRetry, logger } from '@alerthq/core';
 import type { CloudWatchProviderConfig, CloudWatchAlarmWithTags } from './types.js';
 import { tagsToRecord } from './types.js';
 
@@ -108,14 +108,18 @@ export class CloudWatchApiClient {
    * Returns `false` if any region is unreachable.
    */
   async testConnection(): Promise<boolean> {
-    if (this.clients.size === 0) return false;
+    if (this.clients.size === 0) {
+      logger.debug('[aws-cloudwatch] No region clients configured');
+      return false;
+    }
 
-    for (const [, client] of this.clients) {
+    for (const [region, client] of this.clients) {
       try {
-        await client.send(
-          new DescribeAlarmsCommand({ MaxRecords: 1 }),
+        await client.send(new DescribeAlarmsCommand({ MaxRecords: 1 }));
+      } catch (err) {
+        logger.debug(
+          `[aws-cloudwatch] Connection test failed for region ${region}: ${String(err)}`,
         );
-      } catch {
         return false;
       }
     }

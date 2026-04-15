@@ -29,9 +29,7 @@ export class GrafanaApiClient {
     return withRetry(async () => {
       const resp = await fetch(url, { headers: this.headers });
       if (!resp.ok) {
-        throw new Error(
-          `[grafana] Failed to fetch alert rules: ${resp.status} ${resp.statusText}`,
-        );
+        throw new Error(`[grafana] Failed to fetch alert rules: ${resp.status} ${resp.statusText}`);
       }
       return (await resp.json()) as GrafanaAlertRule[];
     });
@@ -56,8 +54,12 @@ export class GrafanaApiClient {
     try {
       const url = `${this.baseUrl}/api/health`;
       const resp = await fetch(url, { headers: this.headers });
+      if (!resp.ok) {
+        logger.debug(`[grafana] Health check failed: ${resp.status} ${resp.statusText}`);
+      }
       return resp.ok;
-    } catch {
+    } catch (err) {
+      logger.debug(`[grafana] Connection test failed: ${String(err)}`);
       return false;
     }
   }

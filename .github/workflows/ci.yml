@@ -24,12 +24,35 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Audit dependencies
+        run: pnpm audit --prod --audit-level=high
+
       - run: pnpm format:check
 
       - run: pnpm lint
 
       - run: pnpm typecheck
 
-      - run: pnpm test
+      - name: Run tests
+        if: matrix.node-version != 22
+        run: pnpm test
+
+      - name: Run tests with coverage
+        if: matrix.node-version == 22
+        run: pnpm test:coverage
+
+      - name: Upload coverage artifacts
+        if: matrix.node-version == 22
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: packages/*/coverage/lcov.info
+          retention-days: 14
 
       - run: pnpm build
+
+      - name: CLI smoke test
+        run: |
+          node packages/cli/dist/index.js --help
+          node packages/cli/dist/index.js --version
+          node packages/cli/dist/index.js --llm-help

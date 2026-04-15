@@ -69,11 +69,7 @@ export async function setTag(
  * @returns `true` if the tag existed and was removed.
  * @throws If no match or ambiguous match.
  */
-export async function removeTag(
-  ctx: Context,
-  idOrPrefix: string,
-  key: string,
-): Promise<boolean> {
+export async function removeTag(ctx: Context, idOrPrefix: string, key: string): Promise<boolean> {
   const alertId = await resolveAlertByPrefix(ctx, idOrPrefix);
   const removed = await ctx.storage.removeOverlayTag(alertId, key);
   if (removed) {

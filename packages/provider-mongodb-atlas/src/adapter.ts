@@ -27,7 +27,9 @@ export class AtlasProviderAdapter implements ProviderAdapter {
       alerts.push(...projectAlerts);
     }
 
-    logger.info(`[mongodb-atlas] Fetched ${alerts.length} alerts total across ${this.config.projectIds.length} projects`);
+    logger.info(
+      `[mongodb-atlas] Fetched ${alerts.length} alerts total across ${this.config.projectIds.length} projects`,
+    );
     return alerts;
   }
 
@@ -35,12 +37,19 @@ export class AtlasProviderAdapter implements ProviderAdapter {
     try {
       const baseUrl = this.config.baseUrl ?? DEFAULT_BASE_URL;
       const projectId = this.config.projectIds[0];
-      if (!projectId) return false;
+      if (!projectId) {
+        logger.debug('[mongodb-atlas] No project IDs configured');
+        return false;
+      }
 
       const url = `${baseUrl}/api/atlas/v2/groups/${projectId}/alertConfigs?pageNum=1&itemsPerPage=1`;
       const resp = await this.client.fetch(url);
+      if (!resp.ok) {
+        logger.debug(`[mongodb-atlas] API returned ${resp.status} ${resp.statusText}`);
+      }
       return resp.ok;
-    } catch {
+    } catch (err) {
+      logger.debug(`[mongodb-atlas] Connection test failed: ${String(err)}`);
       return false;
     }
   }
@@ -55,7 +64,9 @@ export class AtlasProviderAdapter implements ProviderAdapter {
       throw new Error('[mongodb-atlas] config.privateKey is required and must be a string');
     }
     if (!config.projectIds || !Array.isArray(config.projectIds) || config.projectIds.length === 0) {
-      throw new Error('[mongodb-atlas] config.projectIds is required and must be a non-empty array of strings');
+      throw new Error(
+        '[mongodb-atlas] config.projectIds is required and must be a non-empty array of strings',
+      );
     }
 
     for (const id of config.projectIds) {
@@ -86,7 +97,7 @@ export class AtlasProviderAdapter implements ProviderAdapter {
         const resp = await this.client.fetch(url);
         if (!resp.ok) {
           throw new Error(
-            `Atlas API error: ${resp.status} ${resp.statusText} for project ${projectId}`,
+            `[mongodb-atlas] Atlas API error: ${resp.status} ${resp.statusText} for project ${projectId}`,
           );
         }
         return (await resp.json()) as AtlasAlertConfigListResponse;

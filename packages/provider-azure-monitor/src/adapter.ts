@@ -12,6 +12,7 @@ import { mapMetricAlert, mapActivityLogAlert, mapScheduledQueryRule } from './ma
 
 export class AzureMonitorProviderAdapter implements ProviderAdapter {
   readonly name = 'azure-monitor';
+  readonly sources = ['azure-metric-alert', 'azure-activity-log-alert', 'azure-scheduled-query-rule'] as const;
 
   private config!: AzureMonitorProviderConfig;
   private credential!: DefaultAzureCredential;

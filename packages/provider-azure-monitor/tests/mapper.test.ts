@@ -49,14 +49,13 @@ const metricFixture1: AzureMetricAlertResource = {
           '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team',
       },
     ],
-    evaluationFrequency: 'PT5M',
-    windowSize: 'PT15M',
   },
-  systemData: {
-    lastModifiedAt: '2025-03-15T10:30:00Z',
-    lastModifiedBy: 'admin@example.com',
-    lastModifiedByType: 'User',
-  },
+  actions: [
+    { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team' },
+  ],
+  evaluationFrequency: 'PT5M',
+  windowSize: 'PT15M',
+  lastUpdatedTime: new Date('2025-03-15T10:30:00Z'),
 };
 
 const metricFixture2: AzureMetricAlertResource = {
@@ -91,9 +90,13 @@ const metricFixture2: AzureMetricAlertResource = {
       },
     ],
   },
-  systemData: {
-    lastModifiedAt: '2025-02-01T08:00:00Z',
-  },
+  actions: [
+    { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/devs' },
+    { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/ops-team' },
+  ],
+  evaluationFrequency: 'PT5M',
+  windowSize: 'PT15M',
+  lastUpdatedTime: new Date('2025-02-01T08:00:00Z'),
 };
 
 // ── Activity Log Alert fixtures ─────────────────────────────
@@ -123,8 +126,10 @@ const activityLogFixture1: AzureActivityLogAlertResource = {
       ],
     },
   },
-  systemData: {
-    lastModifiedAt: '2025-01-10T16:00:00Z',
+  actions: {
+    actionGroups: [
+      { actionGroupId: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/infra-team' },
+    ],
   },
 };
 
@@ -156,6 +161,9 @@ const activityLogFixture2: AzureActivityLogAlertResource = {
 };
 
 // ── Scheduled Query Rule fixtures ───────────────────────────
+
+const ALERTING_ACTION_ODATA =
+  'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction';
 
 const queryRuleFixture1: AzureScheduledQueryRuleResource = {
   id: '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/scheduledQueryRules/error-rate-rule',
@@ -191,12 +199,12 @@ const queryRuleFixture1: AzureScheduledQueryRuleResource = {
         '/subscriptions/sub-001/resourceGroups/rg-prod/providers/Microsoft.Insights/actionGroups/dev-team',
       ],
     },
-    evaluationFrequency: 'PT5M',
-    windowSize: 'PT20M',
+    trigger: {
+      thresholdOperator: 'GreaterThan',
+      threshold: 50,
+    },
   },
-  systemData: {
-    lastModifiedAt: '2025-03-20T09:15:00Z',
-  },
+  lastUpdatedTime: new Date('2025-03-20T09:15:00Z'),
 };
 
 const queryRuleFixture2: AzureScheduledQueryRuleResource = {
@@ -205,30 +213,30 @@ const queryRuleFixture2: AzureScheduledQueryRuleResource = {
   type: 'Microsoft.Insights/scheduledQueryRules',
   location: 'westus2',
   tags: {},
-  properties: {
-    description: 'Slow database queries detection',
-    severity: 3,
-    enabled: true,
-    criteria: {
-      allOf: [
-        {
-          query: 'dependencies | where duration > 5000',
-          timeAggregation: 'Count',
-          metricMeasureColumn: 'duration',
-          operator: 'GreaterThan',
-          threshold: 10,
-        },
-      ],
-    },
-    actions: {
-      actionGroups: [
+  description: 'Slow database queries detection',
+  enabled: 'true',
+  source: {
+    query: 'dependencies | where duration > 5000',
+    dataSourceId: '/subscriptions/sub-002/resourceGroups/rg-staging/providers/Microsoft.OperationalInsights/workspaces/logs-ws',
+  },
+  schedule: {
+    frequencyInMinutes: 10,
+    timeWindowInMinutes: 30,
+  },
+  action: {
+    odataType: ALERTING_ACTION_ODATA,
+    severity: '3',
+    aznsAction: {
+      actionGroup: [
         '/subscriptions/sub-002/resourceGroups/rg-staging/providers/Microsoft.Insights/actionGroups/dba-team',
       ],
     },
+    trigger: {
+      thresholdOperator: 'GreaterThan',
+      threshold: 10,
+    },
   },
-  systemData: {
-    lastModifiedAt: '2025-04-01T12:00:00Z',
-  },
+  lastUpdatedTime: new Date('2025-04-01T12:00:00Z'),
 };
 
 // ── Tests ───────────────────────────────────────────────────
@@ -257,6 +265,14 @@ describe('mapSeverity', () => {
   it('maps undefined to unknown', () => {
     expect(mapSeverity(undefined)).toBe('unknown');
   });
+
+  it('maps string severity "1" to critical', () => {
+    expect(mapSeverity('1')).toBe('critical');
+  });
+
+  it('maps string severity "3" to info', () => {
+    expect(mapSeverity('3')).toBe('info');
+  });
 });
 
 describe('mapMetricAlert', () => {
@@ -273,7 +289,7 @@ describe('mapMetricAlert', () => {
     expect(alert.conditionSummary).toContain('90');
     expect(alert.notificationTargets).toContain('actionGroup:ops-team');
     expect(alert.tags).toEqual({ environment: 'production', team: 'platform' });
-    expect(alert.lastModifiedAt).toBe('2025-03-15T10:30:00Z');
+    expect(alert.lastModifiedAt).toBe('2025-03-15T10:30:00.000Z');
     expect(alert.id).toBeTruthy();
     expect(alert.configHash).toBeTruthy();
   });
@@ -302,10 +318,10 @@ describe('mapActivityLogAlert', () => {
     expect(alert.conditionSummary).toContain('properties.incidentType == Incident');
     expect(alert.notificationTargets).toContain('actionGroup:infra-team');
     expect(alert.tags).toEqual({ purpose: 'health-monitoring' });
-    expect(alert.lastModifiedAt).toBe('2025-01-10T16:00:00Z');
+    expect(alert.lastModifiedAt).toBeNull();
   });
 
-  it('maps a VM deletion alert with containsAny condition', () => {
+  it('maps a VM deletion alert', () => {
     const alert = mapActivityLogAlert(activityLogFixture2);
     expect(alert.name).toBe('vm-delete-alert');
     expect(alert.conditionSummary).toContain('category == Administrative');
@@ -319,7 +335,7 @@ describe('mapActivityLogAlert', () => {
 });
 
 describe('mapScheduledQueryRule', () => {
-  it('maps a Sev1 error rate scheduled query rule with failingPeriods', () => {
+  it('maps a Sev1 error rate scheduled query rule', () => {
     const alert = mapScheduledQueryRule(queryRuleFixture1);
     expect(alert.source).toBe('azure-scheduled-query-rule');
     expect(alert.name).toBe('High Error Rate');
@@ -327,30 +343,29 @@ describe('mapScheduledQueryRule', () => {
     expect(alert.enabled).toBe(true);
     expect(alert.severity).toBe('critical');
     expect(alert.conditionSummary).toContain('query:');
-    expect(alert.conditionSummary).toContain('Count');
     expect(alert.conditionSummary).toContain('GreaterThan 50');
-    expect(alert.conditionSummary).toContain('failing 3/4');
+    expect(alert.conditionSummary).toContain('every 5min');
     expect(alert.notificationTargets).toContain('actionGroup:dev-team');
     expect(alert.tags).toEqual({ app: 'web-api' });
-    expect(alert.lastModifiedAt).toBe('2025-03-20T09:15:00Z');
+    expect(alert.lastModifiedAt).toBe('2025-03-20T09:15:00.000Z');
   });
 
-  it('maps a Sev3 slow queries rule with metricMeasureColumn', () => {
+  it('maps a Sev3 slow queries rule', () => {
     const alert = mapScheduledQueryRule(queryRuleFixture2);
     expect(alert.name).toBe('slow-queries');
     expect(alert.severity).toBe('info');
-    expect(alert.conditionSummary).toContain('column: duration');
+    expect(alert.conditionSummary).toContain('dependencies | where duration > 5000');
     expect(alert.conditionSummary).toContain('GreaterThan 10');
     expect(alert.notificationTargets).toContain('actionGroup:dba-team');
-    expect(alert.lastModifiedAt).toBe('2025-04-01T12:00:00Z');
+    expect(alert.lastModifiedAt).toBe('2025-04-01T12:00:00.000Z');
   });
 });
 
 describe('summarizeMetricCriteria', () => {
   it('returns "No criteria defined" when criteria is empty', () => {
-    const resource = {
+    const resource: AzureMetricAlertResource = {
       ...metricFixture1,
-      properties: { ...metricFixture1.properties, criteria: { allOf: [] } },
+      criteria: { allOf: [] },
     };
     expect(summarizeMetricCriteria(resource)).toBe('No criteria defined');
   });
@@ -358,19 +373,21 @@ describe('summarizeMetricCriteria', () => {
 
 describe('summarizeActivityLogCondition', () => {
   it('returns "No conditions defined" when conditions are empty', () => {
-    const resource = {
+    const resource: AzureActivityLogAlertResource = {
       ...activityLogFixture1,
-      properties: { ...activityLogFixture1.properties, condition: { allOf: [] } },
+      condition: { allOf: [] },
     };
     expect(summarizeActivityLogCondition(resource)).toBe('No conditions defined');
   });
 });
 
 describe('summarizeScheduledQueryCriteria', () => {
-  it('returns "No criteria defined" when criteria is empty', () => {
-    const resource = {
+  it('returns "No criteria defined" when source has no query and no trigger', () => {
+    const resource: AzureScheduledQueryRuleResource = {
       ...queryRuleFixture1,
-      properties: { ...queryRuleFixture1.properties, criteria: { allOf: [] } },
+      source: { dataSourceId: 'test' },
+      schedule: undefined,
+      action: { odataType: ALERTING_ACTION_ODATA },
     };
     expect(summarizeScheduledQueryCriteria(resource)).toBe('No criteria defined');
   });

@@ -12,6 +12,9 @@ export interface ProviderAdapter {
   /** Unique provider name (e.g. `'aws-cloudwatch'`). */
   readonly name: string;
 
+  /** Alert source values this provider emits (used for single-provider sync merge). */
+  readonly sources: readonly string[];
+
   /**
    * Initialize the adapter with provider-specific configuration.
    * Called once during bootstrap. Should validate config and set up clients.

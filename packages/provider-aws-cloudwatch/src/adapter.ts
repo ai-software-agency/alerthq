@@ -11,6 +11,7 @@ import type { CloudWatchProviderConfig } from './types.js';
  */
 export class CloudWatchAdapter implements ProviderAdapter {
   readonly name = 'aws-cloudwatch';
+  readonly sources = ['aws-cloudwatch'] as const;
 
   private apiClient = new CloudWatchApiClient();
 

@@ -52,6 +52,7 @@ function makeStorage(overrides: Partial<StorageProvider> = {}): StorageProvider 
 function makeProvider(name: string, alerts: AlertDefinition[] = []): ProviderAdapter {
   return {
     name,
+    sources: sources ?? [name],
     initialize: vi.fn().mockResolvedValue(undefined),
     fetchAlerts: vi.fn().mockResolvedValue(alerts),
     testConnection: vi.fn().mockResolvedValue(true),
@@ -122,6 +123,7 @@ describe('sync', () => {
     const good = makeProvider('good', [alert]);
     const bad: ProviderAdapter = {
       name: 'bad',
+      sources: ['bad'],
       initialize: vi.fn().mockResolvedValue(undefined),
       fetchAlerts: vi.fn().mockRejectedValue(new Error('connection refused')),
       testConnection: vi.fn().mockResolvedValue(false),
@@ -172,5 +174,123 @@ describe('sync', () => {
 
     await expect(sync(ctx, { signal: controller.signal })).rejects.toThrow('cancelled');
     expect(provider.fetchAlerts).not.toHaveBeenCalled();
+  });
+
+  it('single-provider sync carries forward alerts from other providers', async () => {
+    const awsAlert = makeAlert({ id: 'aws-1', source: 'aws-cloudwatch', configHash: 'h1' });
+    const azureAlert = makeAlert({ id: 'az-1', source: 'azure-metric-alert', configHash: 'h2' });
+    const latestRun: SyncRun = {
+      version: 1,
+      name: 'Sync',
+      description: '',
+      createdAt: '2025-01-01T00:00:00.000Z',
+      providerStatus: { 'aws-cloudwatch': 'success', 'azure-monitor': 'success' },
+    };
+
+    const freshAzureAlert = makeAlert({ id: 'az-1', source: 'azure-metric-alert', configHash: 'h2-updated' });
+    const storage = makeStorage({
+      getLatestSyncRun: vi.fn().mockResolvedValue(latestRun),
+      getAlertDefinitions: vi.fn().mockResolvedValue([awsAlert, azureAlert]),
+    });
+    const azure = makeProvider('azure-monitor', [freshAzureAlert], [
+      'azure-metric-alert', 'azure-activity-log-alert', 'azure-scheduled-query-rule',
+    ]);
+    const aws = makeProvider('aws-cloudwatch', []);
+    const ctx = makeContext(storage, { 'aws-cloudwatch': aws, 'azure-monitor': azure });
+
+    const result = await sync(ctx, { provider: 'azure-monitor' });
+
+    expect(result).not.toBeNull();
+    expect(aws.fetchAlerts).not.toHaveBeenCalled();
+
+    const savedAlerts = (storage.saveAlertDefinitions as ReturnType<typeof vi.fn>).mock.calls[0]![1] as AlertDefinition[];
+    expect(savedAlerts).toHaveLength(2);
+    expect(savedAlerts.find((a) => a.id === 'aws-1')).toBeTruthy();
+    expect(savedAlerts.find((a) => a.id === 'az-1')?.configHash).toBe('h2-updated');
+  });
+
+  it('single-provider sync drops deleted alerts from targeted provider', async () => {
+    const awsAlert = makeAlert({ id: 'aws-1', source: 'aws-cloudwatch', configHash: 'h1' });
+    const azureAlert1 = makeAlert({ id: 'az-1', source: 'azure-metric-alert', configHash: 'h2' });
+    const azureAlert2 = makeAlert({ id: 'az-2', source: 'azure-activity-log-alert', configHash: 'h3' });
+    const latestRun: SyncRun = {
+      version: 1,
+      name: 'Sync',
+      description: '',
+      createdAt: '2025-01-01T00:00:00.000Z',
+      providerStatus: { 'aws-cloudwatch': 'success', 'azure-monitor': 'success' },
+    };
+
+    const storage = makeStorage({
+      getLatestSyncRun: vi.fn().mockResolvedValue(latestRun),
+      getAlertDefinitions: vi.fn().mockResolvedValue([awsAlert, azureAlert1, azureAlert2]),
+    });
+    const azure = makeProvider('azure-monitor', [azureAlert1], [
+      'azure-metric-alert', 'azure-activity-log-alert', 'azure-scheduled-query-rule',
+    ]);
+    const aws = makeProvider('aws-cloudwatch', []);
+    const ctx = makeContext(storage, { 'aws-cloudwatch': aws, 'azure-monitor': azure });
+
+    const result = await sync(ctx, { provider: 'azure-monitor' });
+
+    expect(result).not.toBeNull();
+    const savedAlerts = (storage.saveAlertDefinitions as ReturnType<typeof vi.fn>).mock.calls[0]![1] as AlertDefinition[];
+    expect(savedAlerts).toHaveLength(2);
+    expect(savedAlerts.find((a) => a.id === 'aws-1')).toBeTruthy();
+    expect(savedAlerts.find((a) => a.id === 'az-1')).toBeTruthy();
+    expect(savedAlerts.find((a) => a.id === 'az-2')).toBeUndefined();
+  });
+
+  it('no-change detection works with merged set', async () => {
+    const awsAlert = makeAlert({ id: 'aws-1', source: 'aws-cloudwatch', configHash: 'h1' });
+    const azureAlert = makeAlert({ id: 'az-1', source: 'azure-metric-alert', configHash: 'h2' });
+    const latestRun: SyncRun = {
+      version: 1,
+      name: 'Sync',
+      description: '',
+      createdAt: '2025-01-01T00:00:00.000Z',
+      providerStatus: { 'aws-cloudwatch': 'success', 'azure-monitor': 'success' },
+    };
+
+    const storage = makeStorage({
+      getLatestSyncRun: vi.fn().mockResolvedValue(latestRun),
+      getAlertDefinitions: vi.fn().mockResolvedValue([awsAlert, azureAlert]),
+    });
+    const azure = makeProvider('azure-monitor', [azureAlert], [
+      'azure-metric-alert', 'azure-activity-log-alert', 'azure-scheduled-query-rule',
+    ]);
+    const aws = makeProvider('aws-cloudwatch', []);
+    const ctx = makeContext(storage, { 'aws-cloudwatch': aws, 'azure-monitor': azure });
+
+    const result = await sync(ctx, { provider: 'azure-monitor' });
+
+    expect(result).toBeNull();
+    expect(storage.createSyncRun).not.toHaveBeenCalled();
+  });
+
+  it('full sync replaces everything without carry-forward', async () => {
+    const oldAlert = makeAlert({ id: 'old-1', source: 'aws-cloudwatch', configHash: 'h-old' });
+    const newAlert = makeAlert({ id: 'new-1', source: 'aws-cloudwatch', configHash: 'h-new' });
+    const latestRun: SyncRun = {
+      version: 1,
+      name: 'Sync',
+      description: '',
+      createdAt: '2025-01-01T00:00:00.000Z',
+      providerStatus: { 'aws-cloudwatch': 'success' },
+    };
+
+    const storage = makeStorage({
+      getLatestSyncRun: vi.fn().mockResolvedValue(latestRun),
+      getAlertDefinitions: vi.fn().mockResolvedValue([oldAlert]),
+    });
+    const aws = makeProvider('aws-cloudwatch', [newAlert]);
+    const ctx = makeContext(storage, { 'aws-cloudwatch': aws });
+
+    const result = await sync(ctx);
+
+    expect(result).not.toBeNull();
+    const savedAlerts = (storage.saveAlertDefinitions as ReturnType<typeof vi.fn>).mock.calls[0]![1] as AlertDefinition[];
+    expect(savedAlerts).toHaveLength(1);
+    expect(savedAlerts[0]!.id).toBe('new-1');
   });
 });
